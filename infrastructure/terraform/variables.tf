@@ -11,5 +11,9 @@ variable "home_peer_public_key" {
 variable "laptop_peer_public_key" {
   description = "Optional WireGuard public key for a roaming laptop peer."
   type        = string
-  default     = ""
+}
+
+variable "root_domain_name" {
+  description = "Route53 hosted zone (root domain) used for certificate validation and alias records"
+  type        = string
 }
