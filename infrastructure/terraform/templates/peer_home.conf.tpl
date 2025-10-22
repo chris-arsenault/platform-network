@@ -14,6 +14,6 @@ Address = ${WG_ADDRESS}
 
 [Peer]
 PublicKey = ${SERVER_PUBKEY}
-AllowedIPs = ${WG_CIDR},${HOME_LAN_CIDR}
+AllowedIPs = ${WG_CIDR},${AWS_PRIVATE_CIDR}
 Endpoint = ${ENDPOINT}
 PersistentKeepalive = 25
