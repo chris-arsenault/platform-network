@@ -16,7 +16,7 @@ variable "home_peer_public_key" {
 variable "laptop_peer_public_key" {
   description = "Optional WireGuard public key for a roaming laptop peer."
   type        = string
-  default = null
+  default     = null
 }
 
 variable "root_domain_name" {
