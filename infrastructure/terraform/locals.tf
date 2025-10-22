@@ -10,7 +10,7 @@ data "aws_route53_zone" "root" {
 }
 
 locals {
-  prefix                 = "vpn"
+  prefix                 = var.prefix
   wireguard_port         = 51820
   wireguard_cidr         = "10.200.0.0/24"
   wireguard_cidr_host    = "10.200.0.1/24"

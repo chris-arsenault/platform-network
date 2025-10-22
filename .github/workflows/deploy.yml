@@ -80,6 +80,7 @@ jobs:
           TF_VAR_home_peer_public_key: ${{ secrets.TRUENAS_PUB_KEY }}
           TF_VAR_home_lan_cidr: ${{ secrets.HOME_LAN_CIDR }}
           TF_VAR_root_domain_name: ${{ secrets.DOMAIN }}
+          TF_VAR_prefix: ${{ secrets.PREFIX }}
           TF_CLI_ARGS: -no-color
         run: |
           terraform plan -input=false -out=tfplan
