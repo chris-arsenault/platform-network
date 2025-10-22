@@ -85,6 +85,14 @@ resource "aws_security_group" "wireguard" {
     ipv6_cidr_blocks = local.allowed_ipv6_cidrs
   }
 
+  ingress {
+    description     = "Allow TCP from reverse proxy"
+    from_port       = 0
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [aws_security_group.reverse_proxy.id]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -165,9 +173,15 @@ resource "aws_security_group" "reverse_proxy" {
 }
 
 # Route from PRIVATE subnet to WG clients via the EC2 instance
-resource "aws_route" "private_to_wg" {
+resource "aws_route" "private_to_wg_via_lan" {
   route_table_id         = aws_route_table.private.id
   destination_cidr_block = var.home_lan_cidr
+  network_interface_id   = module.wireguard.primary_network_interface_id
+}
+
+resource "aws_route" "private_to_wg_via_wg" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = local.wireguard_cidr
   network_interface_id   = module.wireguard.primary_network_interface_id
 }
 
