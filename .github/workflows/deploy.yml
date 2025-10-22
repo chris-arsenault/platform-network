@@ -86,7 +86,7 @@ jobs:
           terraform plan -input=false -out=tfplan
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        # if: github.ref == 'refs/heads/main'
         env:
           TF_CLI_ARGS: -no-color
         run: |
