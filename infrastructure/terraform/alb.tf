@@ -73,6 +73,9 @@ resource "aws_lb_listener" "https" {
       user_pool_client_id        = aws_cognito_user_pool_client.alb.id
       user_pool_domain           = aws_cognito_user_pool_domain.alb.domain
       on_unauthenticated_request = "authenticate"
+      scope                      = "openid email profile"
+      session_cookie_name        = "alb-auth"
+      session_timeout            = 3600
     }
   }
 
