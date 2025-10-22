@@ -23,7 +23,6 @@ resource "aws_instance" "this" {
   disable_api_termination     = false
   user_data                   = var.user_data
   user_data_replace_on_change = true
-  source_dest_check           = false
 
   metadata_options {
     http_endpoint               = "enabled"
