@@ -45,6 +45,7 @@ resource "aws_instance" "this" {
 
   lifecycle {
     create_before_destroy = false
+    ignore_changes        = [source_dest_check]
   }
 }
 
