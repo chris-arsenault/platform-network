@@ -52,7 +52,7 @@ module "wireguard" {
   security_group_ids   = [aws_security_group.wireguard.id]
   associate_eip        = true
 
-  user_data = templatefile("wireguard_user_data.sh.tpl", {
+  user_data = templatefile("${path.module}/templates/wireguard_user_data.sh.tpl", {
     WG_PORT             = local.wireguard_port
     WG_CIDR             = local.wireguard_cidr
     WG_CIDR_HOST        = local.wireguard_cidr_host
