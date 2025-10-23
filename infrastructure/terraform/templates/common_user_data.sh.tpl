@@ -19,14 +19,14 @@ EOF
 dnf -y install vector
 
 TOKEN="$(curl -sS -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')"
-INSTANCE_ID="$(curl -sS -H "X-aws-ec2-metadata-token: ${TOKEN}" http://169.254.169.254/latest/meta-data/instance-id)"
-AWS_REGION="$(curl -sS -H "X-aws-ec2-metadata-token: ${TOKEN}" http://169.254.169.254/latest/meta-data/placement/region)"
+INSTANCE_ID="$(curl -sS -H "X-aws-ec2-metadata-token: $${TOKEN}" http://169.254.169.254/latest/meta-data/instance-id)"
+AWS_REGION="$(curl -sS -H "X-aws-ec2-metadata-token: $${TOKEN}" http://169.254.169.254/latest/meta-data/placement/region)"
 
 mkdir -p /etc/vector
 
 cat >/etc/vector/environment <<EOF
-INSTANCE_ID=${INSTANCE_ID}
-AWS_REGION=${AWS_REGION}
+INSTANCE_ID=$${INSTANCE_ID}
+AWS_REGION=$${AWS_REGION}
 EOF
 
 cat >/etc/vector/vector.toml <<'EOF'
