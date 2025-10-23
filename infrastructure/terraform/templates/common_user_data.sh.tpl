@@ -58,6 +58,8 @@ fi
 
 systemctl try-restart sshd || true
 
+mkdir -p /etc/aide.conf.d
+
 cat >/etc/aide.conf.d/amazon-linux.conf <<'EOC'
 database_out=file:/var/lib/aide/aide.db.gz
 database_new=file:/var/lib/aide/aide.db.new.gz
