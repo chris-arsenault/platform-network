@@ -40,15 +40,15 @@ SOURCE '/aws/vpn/${local.prefix}/nat'
 | limit 20
 EOT
 
-  reverse_proxy_cpu_expression     = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"CPUUtilization\"', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
-  reverse_proxy_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"NetworkOut\"', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
-  reverse_proxy_status_expression  = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"StatusCheckFailed\"', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
+  reverse_proxy_cpu_expression     = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\",MetricName=\"CPUUtilization\"}', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
+  reverse_proxy_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\",MetricName=\"NetworkOut\"}', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
+  reverse_proxy_status_expression  = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\",MetricName=\"StatusCheckFailed\"}', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
 
-  wireguard_cpu_expression     = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"CPUUtilization\"', 'Average', 300)", module.wireguard.autoscaling_group_name)
-  wireguard_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"NetworkOut\"', 'Average', 300)", module.wireguard.autoscaling_group_name)
+  wireguard_cpu_expression     = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\",MetricName=\"CPUUtilization\"}', 'Average', 300)", module.wireguard.autoscaling_group_name)
+  wireguard_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\",MetricName=\"NetworkOut\"}', 'Average', 300)", module.wireguard.autoscaling_group_name)
 
-  nat_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"NetworkOut\"', 'Average', 300)", module.nat.autoscaling_group_name)
-  nat_status_expression  = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"StatusCheckFailed\"', 'Average', 300)", module.nat.autoscaling_group_name)
+  nat_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\",MetricName=\"NetworkOut\"}', 'Average', 300)", module.nat.autoscaling_group_name)
+  nat_status_expression  = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\",MetricName=\"StatusCheckFailed\"}', 'Average', 300)", module.nat.autoscaling_group_name)
 
   dashboard_widgets = [
     {

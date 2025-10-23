@@ -13,11 +13,6 @@ resource "aws_iam_role_policy_attachment" "nat_ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "nat_cloudwatch_logs" {
-  role       = aws_iam_role.nat.name
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-}
-
 module "nat" {
   source = "./modules/ec2_instance"
 
