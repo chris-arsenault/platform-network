@@ -12,10 +12,6 @@ chmod 700 /usr/local/bin/apply-system-hardening.sh
 
 systemctl disable --now amazon-cloudwatch-agent.service || true
 
-cat >/etc/yum.repos.d/vector.repo <<'EOF'
-${VECTOR_REPO_CONFIG}
-EOF
-
 # Install Vector using official installer
 export HOME="$${HOME:-/root}"
 curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y

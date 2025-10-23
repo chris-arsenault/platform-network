@@ -65,7 +65,6 @@ module "wireguard" {
       SECRET_ID           = aws_secretsmanager_secret.wg_keys.id
     })
     HARDENING_SCRIPT        = local.hardening_script
-    VECTOR_REPO_CONFIG      = local.vector_repo_config
     VECTOR_SERVICE_UNIT     = local.vector_service_unit
     VECTOR_SERVICE_OVERRIDE = local.vector_service_override
     VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {

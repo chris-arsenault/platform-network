@@ -26,7 +26,6 @@ module "reverse_proxy" {
       ROUTES = local.reverse_proxy_routes
     })
     HARDENING_SCRIPT        = local.hardening_script
-    VECTOR_REPO_CONFIG      = local.vector_repo_config
     VECTOR_SERVICE_UNIT     = local.vector_service_unit
     VECTOR_SERVICE_OVERRIDE = local.vector_service_override
     VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {
