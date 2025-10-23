@@ -35,6 +35,10 @@ cat >/etc/vector/vector.toml <<'EOF'
 ${VECTOR_CONFIG}
 EOF
 
+cat >/etc/systemd/system/vector.service <<'EOF'
+${VECTOR_SERVICE_UNIT}
+EOF
+
 mkdir -p /etc/systemd/system/vector.service.d
 
 cat >/etc/systemd/system/vector.service.d/override.conf <<'EOF'

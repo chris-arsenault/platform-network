@@ -27,9 +27,9 @@ module "reverse_proxy" {
     })
     HARDENING_SCRIPT        = local.hardening_script
     VECTOR_REPO_CONFIG      = local.vector_repo_config
+    VECTOR_SERVICE_UNIT     = local.vector_service_unit
     VECTOR_SERVICE_OVERRIDE = local.vector_service_override
     VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {
-      AWS_REGION = "us-east-1"
       file_logs = [
         {
           file_path       = "/var/log/nginx/*_access.log"

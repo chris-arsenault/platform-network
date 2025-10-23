@@ -47,4 +47,5 @@ locals {
   })
   vector_repo_config      = templatefile("${path.module}/templates/vector.repo.tpl", {})
   vector_service_override = templatefile("${path.module}/templates/vector_service_override.conf.tpl", {})
+  vector_service_unit     = templatefile("${path.module}/templates/vector.service.tpl", {})
 }
