@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/env vector --config /etc/vector/vector.toml
+ExecStart=/root/.vector/bin/vector --config /etc/vector/vector.toml
 Restart=always
 RestartSec=5
 LimitNOFILE=65536

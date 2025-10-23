@@ -21,7 +21,8 @@ codec = "text"
 [sources.journald_${idx}]
 type = "journald"
 current_boot = true
-include_matches = ["${log.journal}"]
+%{ set parts = split("=", log.journal) }
+include_matches = [[${jsonencode(parts[0])}, ${jsonencode(parts[1])}]]
 
 [sinks.journald_${idx}_cloudwatch]
 type = "aws_cloudwatch_logs"
