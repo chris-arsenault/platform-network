@@ -37,4 +37,14 @@ locals {
   reverse_proxy_primary_hostname = local.reverse_proxy_hostnames[0]
   reverse_proxy_sans             = [for host in local.reverse_proxy_hostnames : host if host != local.reverse_proxy_primary_hostname]
   route53_zone_id                = data.aws_route53_zone.root.zone_id
+  hardening_dnf_config           = templatefile("${path.module}/templates/dnf_automatic.conf.tpl", {})
+  hardening_sysctl_config        = templatefile("${path.module}/templates/sysctl_hardening.conf.tpl", {})
+  hardening_aide_config          = templatefile("${path.module}/templates/aide_amazon_linux.conf.tpl", {})
+  hardening_script = templatefile("${path.module}/templates/apply_system_hardening.sh.tpl", {
+    DNF_AUTOMATIC_CONF     = local.hardening_dnf_config
+    SYSCTL_HARDENING_CONF  = local.hardening_sysctl_config
+    AIDE_AMAZON_LINUX_CONF = local.hardening_aide_config
+  })
+  vector_repo_config        = templatefile("${path.module}/templates/vector.repo.tpl", {})
+  vector_service_override   = templatefile("${path.module}/templates/vector_service_override.conf.tpl", {})
 }

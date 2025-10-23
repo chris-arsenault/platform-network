@@ -64,33 +64,38 @@ module "wireguard" {
       AWS_REGION          = "us-east-1"
       SECRET_ID           = aws_secretsmanager_secret.wg_keys.id
     })
-    FILE_LOGS_JSON = jsonencode([])
-    JOURNAL_LOGS_JSON = jsonencode([
-      {
-        journal         = "SYSTEMD_UNIT=wg-quick@wg0.service"
-        log_group_name  = aws_cloudwatch_log_group.wireguard.name
-        log_stream_name = "{instance_id}/wg-quick"
-      },
-      {
-        journal         = "SYSTEMD_UNIT=wg-healthcheck.service"
-        log_group_name  = aws_cloudwatch_log_group.wireguard.name
-        log_stream_name = "{instance_id}/wg-healthcheck"
-      },
-      {
-        journal         = "SYSLOG_IDENTIFIER=kernel"
-        log_group_name  = aws_cloudwatch_log_group.wireguard.name
-        log_stream_name = "{instance_id}/kernel"
-      },
-      {
-        journal         = "SYSLOG_IDENTIFIER=sshd"
-        log_group_name  = aws_cloudwatch_log_group.wireguard.name
-        log_stream_name = "{instance_id}/journal-sshd"
-      },
-      {
-        journal         = "SYSLOG_IDENTIFIER=auditd"
-        log_group_name  = aws_cloudwatch_log_group.wireguard.name
-        log_stream_name = "{instance_id}/journal-audit"
-      }
-    ])
+    HARDENING_SCRIPT        = local.hardening_script
+    VECTOR_REPO_CONFIG      = local.vector_repo_config
+    VECTOR_SERVICE_OVERRIDE = local.vector_service_override
+    VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {
+      file_logs   = []
+      journal_logs = [
+        {
+          journal         = "SYSTEMD_UNIT=wg-quick@wg0.service"
+          log_group_name  = aws_cloudwatch_log_group.wireguard.name
+          log_stream_name = "{instance_id}/wg-quick"
+        },
+        {
+          journal         = "SYSTEMD_UNIT=wg-healthcheck.service"
+          log_group_name  = aws_cloudwatch_log_group.wireguard.name
+          log_stream_name = "{instance_id}/wg-healthcheck"
+        },
+        {
+          journal         = "SYSLOG_IDENTIFIER=kernel"
+          log_group_name  = aws_cloudwatch_log_group.wireguard.name
+          log_stream_name = "{instance_id}/kernel"
+        },
+        {
+          journal         = "SYSLOG_IDENTIFIER=sshd"
+          log_group_name  = aws_cloudwatch_log_group.wireguard.name
+          log_stream_name = "{instance_id}/journal-sshd"
+        },
+        {
+          journal         = "SYSLOG_IDENTIFIER=auditd"
+          log_group_name  = aws_cloudwatch_log_group.wireguard.name
+          log_stream_name = "{instance_id}/journal-audit"
+        }
+      ]
+    })
   })
 }
