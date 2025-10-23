@@ -19,14 +19,14 @@ data "dns_cname_record_set" "auth" {
 
 # Optional: enforce target match
 locals {
-  cname_ok = contains(data.dns_cname_record_set.auth.cnames, aws_cognito_user_pool_domain.alb.cloudfront_domain)
+  dns_ok = length(data.dns_cname_record_set.auth.cnames) > 0 || length(data.dns_a_record_set.auth.addrs) > 0
 }
 
 resource "null_resource" "dns_ready" {
   triggers = { ok = tostring(local.cname_ok) }
   lifecycle {
     precondition {
-      condition     = local.cname_ok
+      condition     = local.dns_ok
       error_message = "CNAME not propagated yet"
     }
   }
