@@ -34,17 +34,20 @@ module "nat" {
       file_logs = []
       journal_logs = [
         {
-          journal         = "SYSLOG_IDENTIFIER=kernel"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "kernel"
           log_group_name  = aws_cloudwatch_log_group.nat.name
           log_stream_name = "{instance_id}/kernel"
         },
         {
-          journal         = "SYSLOG_IDENTIFIER=sshd"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "sshd"
           log_group_name  = aws_cloudwatch_log_group.nat.name
           log_stream_name = "{instance_id}/journal-sshd"
         },
         {
-          journal         = "SYSLOG_IDENTIFIER=auditd"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "auditd"
           log_group_name  = aws_cloudwatch_log_group.nat.name
           log_stream_name = "{instance_id}/journal-audit"
         }

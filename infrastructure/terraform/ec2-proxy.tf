@@ -43,17 +43,20 @@ module "reverse_proxy" {
       ]
       journal_logs = [
         {
-          journal         = "SYSLOG_IDENTIFIER=nginx"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "nginx"
           log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
           log_stream_name = "{instance_id}/journal-nginx"
         },
         {
-          journal         = "SYSLOG_IDENTIFIER=sshd"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "sshd"
           log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
           log_stream_name = "{instance_id}/journal-sshd"
         },
         {
-          journal         = "SYSLOG_IDENTIFIER=auditd"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "auditd"
           log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
           log_stream_name = "{instance_id}/journal-audit"
         }

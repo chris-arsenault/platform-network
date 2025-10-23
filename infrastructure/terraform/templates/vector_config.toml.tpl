@@ -20,8 +20,7 @@ codec = "text"
 %{ for idx, log in journal_logs ~}
 [sources.journald_${idx}]
 type = "journald"
-current_boot = true
-include_matches = ["${log.journal}"]
+include_matches = [[${jsonencode(log.match_field)}, ${jsonencode(log.match_value)}]]
 
 [sinks.journald_${idx}_cloudwatch]
 type = "aws_cloudwatch_logs"
