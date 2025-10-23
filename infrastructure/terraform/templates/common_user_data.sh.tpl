@@ -17,7 +17,7 @@ ${VECTOR_REPO_CONFIG}
 EOF
 
 # Install Vector using official installer
-export HOME="${HOME:-/root}"
+export HOME="$${HOME:-/root}"
 curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y
 
 TOKEN="$(curl -sS -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')"
