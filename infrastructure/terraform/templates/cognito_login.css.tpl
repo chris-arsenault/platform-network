@@ -1,6 +1,5 @@
 /* Minimalist 80s hacker skin for the Ahara Cognito hosted UI */
 
-html,
 body {
   height: 100%;
   background: #010203;
