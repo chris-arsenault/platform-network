@@ -20,7 +20,6 @@ resource "aws_autoscaling_group" "this" {
 
   instance_refresh {
     strategy = "Rolling"
-    triggers = ["launch_template"]
 
     preferences {
       min_healthy_percentage = 0
