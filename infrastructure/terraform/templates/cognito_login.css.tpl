@@ -1,13 +1,5 @@
 /* Minimalist 80s hacker skin for the Ahara Cognito hosted UI */
 
-body {
-  height: 100%;
-  background: #010203;
-  font-family: "Share Tech Mono", "Courier New", monospace;
-  color: #39ff14;
-  text-transform: uppercase;
-}
-
 .background-customizable {
   position: relative;
   min-height: 100%;
@@ -27,6 +19,9 @@ body {
   max-width: 420px;
   margin: 0 24px;
   background: rgba(0, 10, 0, 0.82);
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  color: #39ff14;
+  text-transform: uppercase;
   border: 2px solid rgba(57, 255, 20, 0.65);
   box-shadow: 0 0 24px rgba(57, 255, 20, 0.22), 0 0 120px rgba(13, 204, 242, 0.1);
   padding: 48px 42px 54px;
@@ -70,7 +65,6 @@ body {
   font-size: 0.85rem;
 }
 
-label,
 .label-customizable {
   display: none !important;
 }
@@ -89,15 +83,12 @@ input[type="password"],
   transition: border 200ms ease, color 200ms ease, filter 200ms ease;
 }
 
-.inputField-customizable:focus,
-input[type="text"]:focus,
-input[type="password"]:focus {
+.inputField-customizable:focus {
   outline: none;
   border-bottom-color: #0dccf2;
   filter: drop-shadow(0 0 6px rgba(13, 204, 242, 0.6));
 }
 
-input::placeholder,
 .inputField-customizable::placeholder {
   color: transparent;
 }
