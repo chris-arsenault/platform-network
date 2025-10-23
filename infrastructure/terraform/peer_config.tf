@@ -3,7 +3,7 @@ locals {
     AWS_PRIVATE_CIDR = local.private_subnet_cidr
     WG_CIDR          = local.wireguard_cidr
     WG_ADDRESS       = local.home_peer_address
-    ENDPOINT         = "${module.wireguard.public_ip}:${local.wireguard_port}"
+    ENDPOINT         = "wg.${var.root_domain_name}:${local.wireguard_port}"
     SERVER_PUBKEY    = aws_ssm_parameter.server_public_key.value
     SSM_PARAM        = aws_ssm_parameter.server_public_key.name
   })

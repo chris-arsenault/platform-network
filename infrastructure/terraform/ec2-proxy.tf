@@ -21,7 +21,43 @@ module "reverse_proxy" {
   subnet_id            = aws_subnet.private.id
   security_group_ids   = [aws_security_group.reverse_proxy.id]
 
-  user_data = templatefile("${path.module}/templates/reverse_proxy_user_data.sh.tpl", {
-    ROUTES = local.reverse_proxy_routes
+  user_data = templatefile("${path.module}/templates/common_user_data.sh.tpl", {
+    EXTRA_SNIPPET = templatefile("${path.module}/templates/reverse_proxy_user_data.sh.tpl", {
+      ROUTES = local.reverse_proxy_routes
+    })
+    HARDENING_SCRIPT        = local.hardening_script
+    VECTOR_SERVICE_UNIT     = local.vector_service_unit
+    VECTOR_SERVICE_OVERRIDE = local.vector_service_override
+    VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {
+      file_logs = [
+        {
+          file_path       = "/var/log/nginx/*_access.log"
+          log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+          log_stream_name = "{instance_id}/nginx-access"
+        },
+        {
+          file_path       = "/var/log/nginx/*_error.log"
+          log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+          log_stream_name = "{instance_id}/nginx-error"
+        }
+      ]
+      journal_logs = [
+        {
+          journal         = "SYSLOG_IDENTIFIER=nginx"
+          log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+          log_stream_name = "{instance_id}/journal-nginx"
+        },
+        {
+          journal         = "SYSLOG_IDENTIFIER=sshd"
+          log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+          log_stream_name = "{instance_id}/journal-sshd"
+        },
+        {
+          journal         = "SYSLOG_IDENTIFIER=auditd"
+          log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+          log_stream_name = "{instance_id}/journal-audit"
+        }
+      ]
+    })
   })
 }

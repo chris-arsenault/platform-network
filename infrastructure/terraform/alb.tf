@@ -19,7 +19,7 @@ resource "aws_lb_target_group" "reverse_proxy" {
   port        = 80
   protocol    = "HTTP"
   vpc_id      = aws_vpc.this.id
-  target_type = "instance"
+  target_type = "ip"
 
   health_check {
     enabled             = true
@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "reverse_proxy" {
 
 resource "aws_lb_target_group_attachment" "reverse_proxy_instance" {
   target_group_arn = aws_lb_target_group.reverse_proxy.arn
-  target_id        = module.reverse_proxy.instance_id
+  target_id        = module.reverse_proxy.private_ip
   port             = 80
 }
 
