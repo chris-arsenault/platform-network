@@ -13,6 +13,11 @@ resource "aws_iam_role_policy_attachment" "reverse_proxy_ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+resource "aws_iam_role_policy_attachment" "reverse_proxy_cloudwatch_logs" {
+  role       = aws_iam_role.reverse_proxy.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
 module "reverse_proxy" {
   source = "./modules/ec2_instance"
 

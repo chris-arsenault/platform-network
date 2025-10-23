@@ -13,6 +13,11 @@ resource "aws_iam_role_policy_attachment" "ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+resource "aws_iam_role_policy_attachment" "wireguard_cloudwatch_logs" {
+  role       = aws_iam_role.wireguard.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
+
 data "aws_iam_policy_document" "wireguard_limited_perms" {
   statement {
     sid = "ManageNamespacedSsmParameters"
