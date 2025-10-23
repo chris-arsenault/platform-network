@@ -16,7 +16,8 @@ cat >/etc/yum.repos.d/vector.repo <<'EOF'
 ${VECTOR_REPO_CONFIG}
 EOF
 
-dnf -y install vector
+# Install Vector using official installer
+curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y
 
 TOKEN="$(curl -sS -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')"
 INSTANCE_ID="$(curl -sS -H "X-aws-ec2-metadata-token: $${TOKEN}" http://169.254.169.254/latest/meta-data/instance-id)"
