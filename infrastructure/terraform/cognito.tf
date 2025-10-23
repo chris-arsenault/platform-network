@@ -26,7 +26,7 @@ resource "aws_cognito_user_pool_domain" "alb" {
 
   certificate_arn = aws_acm_certificate_validation.cognito_auth.certificate_arn
 
-  depends_on = [null_resource.dns_ready]
+  depends_on = [aws_route53_record.apex_placeholder]
 }
 
 resource "aws_cognito_user_pool_client" "alb" {
