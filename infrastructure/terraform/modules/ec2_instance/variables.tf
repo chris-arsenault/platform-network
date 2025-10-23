@@ -35,3 +35,9 @@ variable "instance_type" {
   type        = string
   default     = "t3.micro"
 }
+
+variable "refresh_cron_expression" {
+  description = "EventBridge Scheduler cron expression used to trigger instance refresh."
+  type        = string
+  default     = "cron(0 8 * * ? *)"
+}

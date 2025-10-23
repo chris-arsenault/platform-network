@@ -1,13 +1,9 @@
-#!/bin/bash
-set -euxo pipefail
-
-dnf -y update
 dnf -y install nginx
 
 rm -f /etc/nginx/conf.d/default.conf
 
 cat >/etc/nginx/conf.d/reverse-proxy.conf <<'EOF'
-%{ for host, route in ROUTES }
+%{ for host, route in ROUTES ~}
 server {
   listen 80;
   server_name ${host};
@@ -28,5 +24,4 @@ server {
 %{ endfor }
 EOF
 
-systemctl enable nginx
-systemctl restart nginx
+systemctl enable --now nginx

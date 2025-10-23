@@ -86,6 +86,14 @@ resource "aws_security_group" "wireguard" {
   }
 
   ingress {
+    description = "Health check from VPC"
+    from_port   = 31000
+    to_port     = 31000
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr]
+  }
+
+  ingress {
     description     = "Allow TCP from reverse proxy"
     from_port       = 0
     to_port         = 65535

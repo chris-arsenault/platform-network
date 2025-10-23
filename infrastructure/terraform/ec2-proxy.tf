@@ -21,7 +21,42 @@ module "reverse_proxy" {
   subnet_id            = aws_subnet.private.id
   security_group_ids   = [aws_security_group.reverse_proxy.id]
 
-  user_data = templatefile("${path.module}/templates/reverse_proxy_user_data.sh.tpl", {
-    ROUTES = local.reverse_proxy_routes
+  user_data = templatefile("${path.module}/templates/common_user_data.sh.tpl", {
+    EXTRA_SNIPPET = templatefile("${path.module}/templates/reverse_proxy_user_data.sh.tpl", {
+      ROUTES = local.reverse_proxy_routes
+    })
+    FILE_LOGS_JSON = jsonencode([
+      {
+        file_path                = "/var/log/nginx/*_access.log"
+        log_group_name           = aws_cloudwatch_log_group.reverse_proxy.name
+        log_stream_name          = "{instance_id}/nginx-access"
+        timestamp_format         = "%d/%b/%Y:%H:%M:%S %z"
+        multi_line_start_pattern = "^[0-9]{2}/[A-Za-z]{3}/[0-9]{4}:"
+      },
+      {
+        file_path                = "/var/log/nginx/*_error.log"
+        log_group_name           = aws_cloudwatch_log_group.reverse_proxy.name
+        log_stream_name          = "{instance_id}/nginx-error"
+        timestamp_format         = "%Y/%m/%d %H:%M:%S"
+        multi_line_start_pattern = "^[0-9]{4}/[0-9]{2}/[0-9]{2}"
+      }
+    ])
+    JOURNAL_LOGS_JSON = jsonencode([
+      {
+        journal         = "SYSLOG_IDENTIFIER=nginx"
+        log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+        log_stream_name = "{instance_id}/journal-nginx"
+      },
+      {
+        journal         = "SYSLOG_IDENTIFIER=sshd"
+        log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+        log_stream_name = "{instance_id}/journal-sshd"
+      },
+      {
+        journal         = "SYSLOG_IDENTIFIER=auditd"
+        log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
+        log_stream_name = "{instance_id}/journal-audit"
+      }
+    ])
   })
 }

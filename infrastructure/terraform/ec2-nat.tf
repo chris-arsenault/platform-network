@@ -36,7 +36,27 @@ module "nat" {
   associate_eip        = true
   instance_type        = "t3.nano"
 
-  user_data = templatefile("${path.module}/templates/nat_instance_user_data.sh.tpl", {
-    PRIVATE_SUBNET_CIDR = local.private_subnet_cidr
+  user_data = templatefile("${path.module}/templates/common_user_data.sh.tpl", {
+    EXTRA_SNIPPET = templatefile("${path.module}/templates/nat_instance_user_data.sh.tpl", {
+      PRIVATE_SUBNET_CIDR = local.private_subnet_cidr
+    })
+    FILE_LOGS_JSON = jsonencode([])
+    JOURNAL_LOGS_JSON = jsonencode([
+      {
+        journal         = "SYSLOG_IDENTIFIER=kernel"
+        log_group_name  = aws_cloudwatch_log_group.nat.name
+        log_stream_name = "{instance_id}/kernel"
+      },
+      {
+        journal         = "SYSLOG_IDENTIFIER=sshd"
+        log_group_name  = aws_cloudwatch_log_group.nat.name
+        log_stream_name = "{instance_id}/journal-sshd"
+      },
+      {
+        journal         = "SYSLOG_IDENTIFIER=auditd"
+        log_group_name  = aws_cloudwatch_log_group.nat.name
+        log_stream_name = "{instance_id}/journal-audit"
+      }
+    ])
   })
 }

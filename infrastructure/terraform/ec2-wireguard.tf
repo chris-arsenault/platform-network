@@ -50,18 +50,47 @@ module "wireguard" {
   iam_instance_profile = aws_iam_instance_profile.wireguard.name
   subnet_id            = aws_subnet.public.id
   security_group_ids   = [aws_security_group.wireguard.id]
-  associate_eip        = true
 
-  user_data = templatefile("${path.module}/templates/wireguard_user_data.sh.tpl", {
-    WG_PORT             = local.wireguard_port
-    WG_CIDR             = local.wireguard_cidr
-    WG_CIDR_HOST        = local.wireguard_cidr_host
-    HOME_LAN_CIDR       = var.home_lan_cidr
-    HOME_PEER_PUBKEY    = var.home_peer_public_key
-    LAPTOP_PEER_PUBKEY  = local.laptop_peer_public_key
-    PRIVATE_SUBNET_CIDR = local.private_subnet_cidr
-    SSM_PUBLIC_KEY_PATH = local.ssm_public_key_path
-    AWS_REGION          = "us-east-1"
-    SECRET_ID           = aws_secretsmanager_secret.wg_keys.id
+  user_data = templatefile("${path.module}/templates/common_user_data.sh.tpl", {
+    EXTRA_SNIPPET = templatefile("${path.module}/templates/wireguard_user_data.sh.tpl", {
+      WG_PORT             = local.wireguard_port
+      WG_CIDR             = local.wireguard_cidr
+      WG_CIDR_HOST        = local.wireguard_cidr_host
+      HOME_LAN_CIDR       = var.home_lan_cidr
+      HOME_PEER_PUBKEY    = var.home_peer_public_key
+      LAPTOP_PEER_PUBKEY  = local.laptop_peer_public_key
+      PRIVATE_SUBNET_CIDR = local.private_subnet_cidr
+      SSM_PUBLIC_KEY_PATH = local.ssm_public_key_path
+      AWS_REGION          = "us-east-1"
+      SECRET_ID           = aws_secretsmanager_secret.wg_keys.id
+    })
+    FILE_LOGS_JSON = jsonencode([])
+    JOURNAL_LOGS_JSON = jsonencode([
+      {
+        journal         = "SYSTEMD_UNIT=wg-quick@wg0.service"
+        log_group_name  = aws_cloudwatch_log_group.wireguard.name
+        log_stream_name = "{instance_id}/wg-quick"
+      },
+      {
+        journal         = "SYSTEMD_UNIT=wg-healthcheck.service"
+        log_group_name  = aws_cloudwatch_log_group.wireguard.name
+        log_stream_name = "{instance_id}/wg-healthcheck"
+      },
+      {
+        journal         = "SYSLOG_IDENTIFIER=kernel"
+        log_group_name  = aws_cloudwatch_log_group.wireguard.name
+        log_stream_name = "{instance_id}/kernel"
+      },
+      {
+        journal         = "SYSLOG_IDENTIFIER=sshd"
+        log_group_name  = aws_cloudwatch_log_group.wireguard.name
+        log_stream_name = "{instance_id}/journal-sshd"
+      },
+      {
+        journal         = "SYSLOG_IDENTIFIER=auditd"
+        log_group_name  = aws_cloudwatch_log_group.wireguard.name
+        log_stream_name = "{instance_id}/journal-audit"
+      }
+    ])
   })
 }
