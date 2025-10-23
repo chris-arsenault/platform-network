@@ -21,6 +21,7 @@ INSTANCE_ID="$(curl -sS -H "X-aws-ec2-metadata-token: $${TOKEN}" http://169.254.
 AWS_REGION="$(curl -sS -H "X-aws-ec2-metadata-token: $${TOKEN}" http://169.254.169.254/latest/meta-data/placement/region)"
 
 mkdir -p /etc/vector
+mkdir -p /var/lib/vector
 
 cat >/etc/vector/environment <<EOF
 INSTANCE_ID=$${INSTANCE_ID}

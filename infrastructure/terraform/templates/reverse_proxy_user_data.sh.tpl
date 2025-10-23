@@ -3,7 +3,7 @@ CONNECTIVITY_READY=0
 MAX_ATTEMPTS=60
 
 for attempt in $(seq 1 $MAX_ATTEMPTS); do
-  if curl --proto '=https' --tlsv1.2 --silent --location --head --fail --connect-timeout 5 "$CONNECTIVITY_TARGET" >/dev/null; then
+  if curl --proto '=https' --tlsv1.2 --silent --location --head --connect-timeout 5 "$CONNECTIVITY_TARGET" >/dev/null; then
     CONNECTIVITY_READY=1
     echo "outbound connectivity available after $attempt attempt(s)" >&2
     break

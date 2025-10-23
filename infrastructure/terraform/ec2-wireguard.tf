@@ -71,27 +71,32 @@ module "wireguard" {
       file_logs = []
       journal_logs = [
         {
-          journal         = "SYSTEMD_UNIT=wg-quick@wg0.service"
+          match_field     = "SYSTEMD_UNIT"
+          match_value     = "wg-quick@wg0.service"
           log_group_name  = aws_cloudwatch_log_group.wireguard.name
           log_stream_name = "{instance_id}/wg-quick"
         },
         {
-          journal         = "SYSTEMD_UNIT=wg-healthcheck.service"
+          match_field     = "SYSTEMD_UNIT"
+          match_value     = "wg-healthcheck.service"
           log_group_name  = aws_cloudwatch_log_group.wireguard.name
           log_stream_name = "{instance_id}/wg-healthcheck"
         },
         {
-          journal         = "SYSLOG_IDENTIFIER=kernel"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "kernel"
           log_group_name  = aws_cloudwatch_log_group.wireguard.name
           log_stream_name = "{instance_id}/kernel"
         },
         {
-          journal         = "SYSLOG_IDENTIFIER=sshd"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "sshd"
           log_group_name  = aws_cloudwatch_log_group.wireguard.name
           log_stream_name = "{instance_id}/journal-sshd"
         },
         {
-          journal         = "SYSLOG_IDENTIFIER=auditd"
+          match_field     = "SYSLOG_IDENTIFIER"
+          match_value     = "auditd"
           log_group_name  = aws_cloudwatch_log_group.wireguard.name
           log_stream_name = "{instance_id}/journal-audit"
         }

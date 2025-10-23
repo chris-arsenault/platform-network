@@ -40,15 +40,96 @@ SOURCE '/aws/vpn/${local.prefix}/nat'
 | limit 20
 EOT
 
-  reverse_proxy_cpu_expression     = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"CPUUtilization\"', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
-  reverse_proxy_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"NetworkOut\"', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
-  reverse_proxy_status_expression  = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"StatusCheckFailed\"', 'Average', 300)", module.reverse_proxy.autoscaling_group_name)
+  reverse_proxy_metrics = [
+    [
+      "AWS/EC2",
+      "CPUUtilization",
+      "AutoScalingGroupName",
+      module.reverse_proxy.autoscaling_group_name,
+      {
+        id     = "m1"
+        label  = "Reverse Proxy CPU Utilization"
+        region = local.cloudwatch_region
+      }
+    ],
+    [
+      "AWS/EC2",
+      "NetworkOut",
+      "AutoScalingGroupName",
+      module.reverse_proxy.autoscaling_group_name,
+      {
+        id     = "m2"
+        label  = "Reverse Proxy Network Out"
+        region = local.cloudwatch_region
+        yAxis  = "right"
+      }
+    ]
+  ]
 
-  wireguard_cpu_expression     = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"CPUUtilization\"', 'Average', 300)", module.wireguard.autoscaling_group_name)
-  wireguard_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"NetworkOut\"', 'Average', 300)", module.wireguard.autoscaling_group_name)
+  wireguard_metrics = [
+    [
+      "AWS/EC2",
+      "CPUUtilization",
+      "AutoScalingGroupName",
+      module.wireguard.autoscaling_group_name,
+      {
+        id     = "m3"
+        label  = "WireGuard CPU Utilization"
+        region = local.cloudwatch_region
+      }
+    ],
+    [
+      "AWS/EC2",
+      "NetworkOut",
+      "AutoScalingGroupName",
+      module.wireguard.autoscaling_group_name,
+      {
+        id     = "m4"
+        label  = "WireGuard Network Out"
+        region = local.cloudwatch_region
+        yAxis  = "right"
+      }
+    ]
+  ]
 
-  nat_network_expression = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"NetworkOut\"', 'Average', 300)", module.nat.autoscaling_group_name)
-  nat_status_expression  = format("SEARCH('{AWS/EC2,AutoScalingGroupName=\"%s\"} MetricName=\"StatusCheckFailed\"', 'Average', 300)", module.nat.autoscaling_group_name)
+  nat_metrics = [
+    [
+      "AWS/EC2",
+      "NetworkOut",
+      "AutoScalingGroupName",
+      module.nat.autoscaling_group_name,
+      {
+        id     = "m5"
+        label  = "NAT Network Out"
+        region = local.cloudwatch_region
+      }
+    ]
+  ]
+
+  status_metrics = [
+    [
+      "AWS/EC2",
+      "StatusCheckFailed",
+      "AutoScalingGroupName",
+      module.reverse_proxy.autoscaling_group_name,
+      {
+        id     = "m6"
+        label  = "Reverse Proxy Status Checks"
+        region = local.cloudwatch_region
+      }
+    ],
+    [
+      "AWS/EC2",
+      "StatusCheckFailed",
+      "AutoScalingGroupName",
+      module.nat.autoscaling_group_name,
+      {
+        id     = "m7"
+        label  = "NAT Status Checks"
+        region = local.cloudwatch_region
+      }
+    ]
+  ]
 
   dashboard_widgets = [
     {
@@ -94,23 +175,7 @@ EOT
       width  = 12
       height = 6
       properties = {
-        metrics = [
-          [
-            {
-              expression = local.reverse_proxy_cpu_expression
-              label      = "Reverse Proxy CPU Utilization"
-              id         = "e1"
-            }
-          ],
-          [
-            {
-              expression = local.reverse_proxy_network_expression
-              label      = "Reverse Proxy Network Out"
-              id         = "e2"
-              yAxis      = "right"
-            }
-          ]
-        ]
+        metrics = local.reverse_proxy_metrics
         region  = local.cloudwatch_region
         title   = "Reverse Proxy Performance"
         view    = "timeSeries"
@@ -126,23 +191,7 @@ EOT
       width  = 12
       height = 6
       properties = {
-        metrics = [
-          [
-            {
-              expression = local.wireguard_cpu_expression
-              label      = "WireGuard CPU Utilization"
-              id         = "e3"
-            }
-          ],
-          [
-            {
-              expression = local.wireguard_network_expression
-              label      = "WireGuard Network Out"
-              id         = "e4"
-              yAxis      = "right"
-            }
-          ]
-        ]
+        metrics = local.wireguard_metrics
         region  = local.cloudwatch_region
         title   = "WireGuard Performance"
         view    = "timeSeries"
@@ -158,15 +207,7 @@ EOT
       width  = 12
       height = 6
       properties = {
-        metrics = [
-          [
-            {
-              expression = local.nat_network_expression
-              label      = "NAT Network Out"
-              id         = "e5"
-            }
-          ]
-        ]
+        metrics = local.nat_metrics
         region  = local.cloudwatch_region
         title   = "NAT Throughput"
         view    = "timeSeries"
@@ -182,22 +223,7 @@ EOT
       width  = 12
       height = 6
       properties = {
-        metrics = [
-          [
-            {
-              expression = local.reverse_proxy_status_expression
-              label      = "Reverse Proxy Status Checks"
-              id         = "e6"
-            }
-          ],
-          [
-            {
-              expression = local.nat_status_expression
-              label      = "NAT Status Checks"
-              id         = "e7"
-            }
-          ]
-        ]
+        metrics = local.status_metrics
         region  = local.cloudwatch_region
         title   = "EC2 Status Health"
         view    = "timeSeries"
