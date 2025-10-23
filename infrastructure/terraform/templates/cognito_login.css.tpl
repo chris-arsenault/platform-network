@@ -15,28 +15,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top, rgba(57, 255, 20, 0.18), transparent 55%), #010203;
+  background-color: #010203;
   overflow: hidden;
-}
-
-.background-customizable::before,
-.background-customizable::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.background-customizable::before {
-  background-image: linear-gradient(rgba(57, 255, 20, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57, 255, 20, 0.08) 1px, transparent 1px);
-  background-size: 22px 22px;
-  opacity: 0.4;
-}
-
-.background-customizable::after {
-  background: linear-gradient(rgba(5, 15, 5, 0.3), transparent 40%, rgba(5, 15, 5, 0.9));
-  mix-blend-mode: screen;
 }
 
 .banner-customizable {
@@ -44,12 +24,13 @@ body {
 }
 
 .modal-body {
-  width: min(420px, calc(100% - 48px));
+  width: 100%;
+  max-width: 420px;
+  margin: 0 24px;
   background: rgba(0, 10, 0, 0.82);
   border: 2px solid rgba(57, 255, 20, 0.65);
   box-shadow: 0 0 24px rgba(57, 255, 20, 0.22), 0 0 120px rgba(13, 204, 242, 0.1);
   padding: 48px 42px 54px;
-  backdrop-filter: blur(2px);
   position: relative;
 }
 
@@ -191,14 +172,11 @@ a {
 .modal-body::after {
   content: "";
   position: absolute;
-  inset: -8px;
+  top: -8px;
+  right: -8px;
+  bottom: -8px;
+  left: -8px;
   border: 1px solid rgba(57, 255, 20, 0.2);
   animation: ahara-scanline 6s linear infinite;
   opacity: 0.12;
-}
-
-.background-customizable,
-.modal-body,
-.logo-customizable {
-  isolation: isolate;
 }
