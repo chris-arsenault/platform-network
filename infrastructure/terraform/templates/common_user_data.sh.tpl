@@ -99,7 +99,7 @@ cat >/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json <<JSON
       "files": {
         "collect_list": ${FILE_LOGS_JSON}
       },
-      "journal": {
+      "journals": {
         "collect_list": ${JOURNAL_LOGS_JSON}
       }
     },
