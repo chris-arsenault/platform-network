@@ -21,8 +21,12 @@ resource "aws_cognito_user_pool" "alb" {
 }
 
 resource "aws_cognito_user_pool_domain" "alb" {
-  domain       = local.cognito_domain_prefix
+  domain       = local.cognito_auth_domain
   user_pool_id = aws_cognito_user_pool.alb.id
+
+  certificate_arn = aws_acm_certificate_validation.cognito_auth.certificate_arn
+
+  depends_on = [aws_route53_record.apex_placeholder]
 }
 
 resource "aws_cognito_user_pool_client" "alb" {
@@ -48,6 +52,16 @@ resource "aws_cognito_user_pool_client" "alb" {
     [for host in local.reverse_proxy_hostnames : "https://${host}/logout"],
     ["https://${aws_lb.reverse_proxy.dns_name}/logout"]
   )
+}
+
+resource "aws_cognito_user_pool_ui_customization" "alb" {
+  user_pool_id = aws_cognito_user_pool.alb.id
+  client_id    = aws_cognito_user_pool_client.alb.id
+  css          = templatefile("${path.module}/templates/cognito_login.css.tpl", {})
+
+  depends_on = [
+    aws_cognito_user_pool_domain.alb
+  ]
 }
 
 resource "aws_cognito_user_group" "reverse_proxy" {

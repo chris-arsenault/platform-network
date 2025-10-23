@@ -24,6 +24,4 @@ module "reverse_proxy" {
   user_data = templatefile("${path.module}/templates/reverse_proxy_user_data.sh.tpl", {
     ROUTES = local.reverse_proxy_routes
   })
-
-  depends_on = [aws_nat_gateway.this]
 }

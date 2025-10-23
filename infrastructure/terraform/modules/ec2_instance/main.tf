@@ -18,7 +18,7 @@ resource "aws_network_interface" "this" {
 
 resource "aws_instance" "this" {
   ami                         = data.aws_ssm_parameter.al2023_ami.value
-  instance_type               = "t3.micro"
+  instance_type               = var.instance_type
   iam_instance_profile        = var.iam_instance_profile
   disable_api_termination     = false
   user_data                   = var.user_data
@@ -45,6 +45,7 @@ resource "aws_instance" "this" {
 
   lifecycle {
     create_before_destroy = false
+    ignore_changes        = [source_dest_check]
   }
 }
 
