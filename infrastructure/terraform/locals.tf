@@ -45,6 +45,6 @@ locals {
     SYSCTL_HARDENING_CONF  = local.hardening_sysctl_config
     AIDE_AMAZON_LINUX_CONF = local.hardening_aide_config
   })
-  vector_repo_config        = templatefile("${path.module}/templates/vector.repo.tpl", {})
-  vector_service_override   = templatefile("${path.module}/templates/vector_service_override.conf.tpl", {})
+  vector_repo_config      = templatefile("${path.module}/templates/vector.repo.tpl", {})
+  vector_service_override = templatefile("${path.module}/templates/vector_service_override.conf.tpl", {})
 }

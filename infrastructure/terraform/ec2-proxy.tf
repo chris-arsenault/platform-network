@@ -31,13 +31,13 @@ module "reverse_proxy" {
     VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {
       file_logs = [
         {
-          file_path      = "/var/log/nginx/*_access.log"
-          log_group_name = aws_cloudwatch_log_group.reverse_proxy.name
+          file_path       = "/var/log/nginx/*_access.log"
+          log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
           log_stream_name = "{instance_id}/nginx-access"
         },
         {
-          file_path      = "/var/log/nginx/*_error.log"
-          log_group_name = aws_cloudwatch_log_group.reverse_proxy.name
+          file_path       = "/var/log/nginx/*_error.log"
+          log_group_name  = aws_cloudwatch_log_group.reverse_proxy.name
           log_stream_name = "{instance_id}/nginx-error"
         }
       ]

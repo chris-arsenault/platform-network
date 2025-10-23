@@ -10,7 +10,7 @@ read_from = "beginning"
 type = "aws_cloudwatch_logs"
 inputs = ["file_${idx}"]
 group_name = "${log.log_group_name}"
-stream_name = "${replace(log.log_stream_name, "{instance_id}", "${INSTANCE_ID}")}"
+stream_name = "${replace(log.log_stream_name, "{instance_id}", "$${INSTANCE_ID}")}"
 region = "${AWS_REGION}"
 
 [sinks.file_${idx}_cloudwatch.encoding]
@@ -27,7 +27,7 @@ include_matches = ["${log.journal}"]
 type = "aws_cloudwatch_logs"
 inputs = ["journald_${idx}"]
 group_name = "${log.log_group_name}"
-stream_name = "${replace(log.log_stream_name, "{instance_id}", "${INSTANCE_ID}")}"
+stream_name = "${replace(log.log_stream_name, "{instance_id}", "$${INSTANCE_ID}")}"
 region = "${AWS_REGION}"
 
 [sinks.journald_${idx}_cloudwatch.encoding]

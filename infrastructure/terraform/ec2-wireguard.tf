@@ -68,7 +68,7 @@ module "wireguard" {
     VECTOR_REPO_CONFIG      = local.vector_repo_config
     VECTOR_SERVICE_OVERRIDE = local.vector_service_override
     VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {
-      file_logs   = []
+      file_logs = []
       journal_logs = [
         {
           journal         = "SYSTEMD_UNIT=wg-quick@wg0.service"
