@@ -25,18 +25,8 @@ resource "aws_cognito_user_pool_domain" "alb" {
   user_pool_id = aws_cognito_user_pool.alb.id
 
   certificate_arn = aws_acm_certificate_validation.cognito_auth.certificate_arn
-}
 
-resource "aws_route53_record" "cognito_auth_alias" {
-  zone_id = local.route53_zone_id
-  name    = local.cognito_auth_domain
-  type    = "A"
-
-  alias {
-    name                   = aws_cognito_user_pool_domain.alb.cloudfront_distribution
-    zone_id                = aws_cognito_user_pool_domain.alb.cloudfront_distribution_zone_id
-    evaluate_target_health = false
-  }
+  depends_on = [null_resource.dns_ready]
 }
 
 resource "aws_cognito_user_pool_client" "alb" {
