@@ -6,6 +6,7 @@ variable "name" {
 variable "iam_instance_profile" {
   description = "IAM instance profile name to attach. Leave null to skip."
   type        = string
+  default     = null
 }
 
 variable "subnet_id" {
@@ -27,4 +28,10 @@ variable "associate_eip" {
   description = "Associate a public Elastic IP with the instance."
   type        = bool
   default     = false
+}
+
+variable "instance_type" {
+  description = "Instance type to launch."
+  type        = string
+  default     = "t3.micro"
 }
