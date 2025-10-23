@@ -20,7 +20,11 @@ codec = "text"
 %{ for idx, log in journal_logs ~}
 [sources.journald_${idx}]
 type = "journald"
-include_matches = [[${jsonencode(log.match_field)}, ${jsonencode(log.match_value)}]]
+%{ if log.match_field == "SYSTEMD_UNIT" }
+include_units = [${jsonencode(log.match_value)}]
+%{ else }
+include_matches.${log.match_field} = [${jsonencode(log.match_value)}]
+%{ endif }
 
 [sinks.journald_${idx}_cloudwatch]
 type = "aws_cloudwatch_logs"
