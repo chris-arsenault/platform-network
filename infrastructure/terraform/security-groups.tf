@@ -1,0 +1,136 @@
+resource "aws_security_group" "nat" {
+  name        = "${local.prefix}-nat-sg"
+  description = "Allows private subnet instances to reach the NAT instance"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description = "Allow traffic from within the VPC"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [local.vpc_cidr]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = [
+      "::/0"
+    ]
+  }
+
+  tags = {
+    Name = "${local.prefix}-nat-sg"
+  }
+}
+
+resource "aws_security_group" "alb" {
+  name        = "${local.prefix}-alb-sg"
+  description = "Public ALB access controls"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = [
+      "::/0"
+    ]
+  }
+
+  tags = {
+    Name = "${local.prefix}-alb-sg"
+  }
+}
+
+resource "aws_security_group" "reverse_proxy" {
+  name        = "${local.prefix}-proxy-sg"
+  description = "Allows ALB traffic to reach reverse proxy"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description     = "HTTP from ALB"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = [
+      "::/0"
+    ]
+  }
+
+  tags = {
+    Name = "${local.prefix}-proxy-sg"
+  }
+}
+
+resource "aws_security_group" "wireguard" {
+  name        = "${local.prefix}-sg"
+  description = "WireGuard access controls"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    description      = "WireGuard UDP ingress"
+    from_port        = local.wireguard_port
+    to_port          = local.wireguard_port
+    protocol         = "udp"
+    cidr_blocks      = local.allowed_cidrs
+    ipv6_cidr_blocks = local.allowed_ipv6_cidrs
+  }
+
+  ingress {
+    description = "Health check from VPC"
+    from_port   = 31000
+    to_port     = 31000
+    protocol    = "tcp"
+    cidr_blocks = [local.vpc_cidr]
+  }
+
+  ingress {
+    description     = "Allow TCP from reverse proxy"
+    from_port       = 0
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [aws_security_group.reverse_proxy.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = [
+      "::/0"
+    ]
+  }
+
+  tags = {
+    Name = "${local.prefix}-sg"
+  }
+}

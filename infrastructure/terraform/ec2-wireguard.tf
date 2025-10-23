@@ -48,7 +48,7 @@ module "wireguard" {
 
   name                 = "${local.prefix}-wireguard-server"
   iam_instance_profile = aws_iam_instance_profile.wireguard.name
-  subnet_id            = aws_subnet.public.id
+  subnet_id            = aws_subnet.private.id
   security_group_ids   = [aws_security_group.wireguard.id]
 
   user_data = templatefile("${path.module}/templates/common_user_data.sh.tpl", {

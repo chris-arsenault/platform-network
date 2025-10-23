@@ -1,31 +1,3 @@
-resource "aws_security_group" "nat" {
-  name        = "${local.prefix}-nat-sg"
-  description = "Allows private subnet instances to reach the NAT instance"
-  vpc_id      = aws_vpc.this.id
-
-  ingress {
-    description = "Allow traffic from within the VPC"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [local.vpc_cidr]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = [
-      "::/0"
-    ]
-  }
-
-  tags = {
-    Name = "${local.prefix}-nat-sg"
-  }
-}
-
 resource "aws_iam_role" "nat" {
   name_prefix        = "${local.prefix}-nat-"
   assume_role_policy = data.aws_iam_policy_document.assume_ec2.json
