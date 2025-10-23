@@ -58,6 +58,10 @@ resource "aws_cognito_user_pool_ui_customization" "alb" {
   user_pool_id = aws_cognito_user_pool.alb.id
   client_id    = aws_cognito_user_pool_client.alb.id
   css          = templatefile("${path.module}/templates/cognito_login.css.tpl", {})
+
+  depends_on = [
+    aws_cognito_user_pool_domain.alb
+  ]
 }
 
 resource "aws_cognito_user_group" "reverse_proxy" {
