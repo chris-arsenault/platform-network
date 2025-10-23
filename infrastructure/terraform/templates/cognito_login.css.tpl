@@ -1,20 +1,11 @@
 /* Minimalist 80s hacker skin for the Ahara Cognito hosted UI */
-:root {
-  --ahara-bg: #010203;
-  --ahara-panel: rgba(0, 10, 0, 0.82);
-  --ahara-accent: #39ff14;
-  --ahara-secondary: #0dccf2;
-  --ahara-danger: #ff2079;
-  --ahara-font: "Share Tech Mono", "Courier New", monospace;
-  --ahara-logo: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20256%20256%27%3E%0A%20%20%3Crect%20width%3D%27256%27%20height%3D%27256%27%20fill%3D%27%23020303%27%2F%3E%0A%20%20%3Crect%20x%3D%2710%27%20y%3D%2710%27%20width%3D%27236%27%20height%3D%27236%27%20fill%3D%27none%27%20stroke%3D%27%2339ff14%27%20stroke-width%3D%274%27%2F%3E%0A%20%20%3Crect%20x%3D%2726%27%20y%3D%2726%27%20width%3D%27204%27%20height%3D%27204%27%20fill%3D%27none%27%20stroke%3D%27%230dccf2%27%20stroke-width%3D%272%27%20stroke-dasharray%3D%276%206%27%2F%3E%0A%20%20%3Cpath%20d%3D%27M26%20190%20L230%2066%27%20stroke%3D%27%23ff2079%27%20stroke-width%3D%271.5%27%20fill%3D%27none%27%20stroke-dasharray%3D%274%208%27%2F%3E%0A%20%20%3Ctext%20x%3D%2750%25%27%20y%3D%2748%25%27%20fill%3D%27%2339ff14%27%20font-family%3D%27Courier%20New%2C%20monospace%27%20font-size%3D%2748%27%20text-anchor%3D%27middle%27%3EAHARA%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2750%25%27%20y%3D%2764%25%27%20fill%3D%27%230dccf2%27%20font-family%3D%27Courier%20New%2C%20monospace%27%20font-size%3D%2718%27%20text-anchor%3D%27middle%27%3EPLACEHOLDER%3C%2Ftext%3E%0A%3C%2Fsvg%3E");
-}
 
 html,
 body {
   height: 100%;
-  background: var(--ahara-bg);
-  font-family: var(--ahara-font);
-  color: var(--ahara-accent);
+  background: #010203;
+  font-family: "Share Tech Mono", "Courier New", monospace;
+  color: #39ff14;
   text-transform: uppercase;
 }
 
@@ -24,7 +15,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top, rgba(57, 255, 20, 0.18), transparent 55%), var(--ahara-bg);
+  background: radial-gradient(circle at top, rgba(57, 255, 20, 0.18), transparent 55%), #010203;
   overflow: hidden;
 }
 
@@ -54,7 +45,7 @@ body {
 
 .modal-body {
   width: min(420px, calc(100% - 48px));
-  background: var(--ahara-panel);
+  background: rgba(0, 10, 0, 0.82);
   border: 2px solid rgba(57, 255, 20, 0.65);
   box-shadow: 0 0 24px rgba(57, 255, 20, 0.22), 0 0 120px rgba(13, 204, 242, 0.1);
   padding: 48px 42px 54px;
@@ -76,7 +67,7 @@ body {
   width: 160px;
   height: 160px;
   margin: 0 auto 32px;
-  background-image: var(--ahara-logo);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20256%20256%27%3E%0A%20%20%3Crect%20width%3D%27256%27%20height%3D%27256%27%20fill%3D%27%23020303%27%2F%3E%0A%20%20%3Crect%20x%3D%2710%27%20y%3D%2710%27%20width%3D%27236%27%20height%3D%27236%27%20fill%3D%27none%27%20stroke%3D%27%2339ff14%27%20stroke-width%3D%274%27%2F%3E%0A%20%20%3Crect%20x%3D%2726%27%20y%3D%2726%27%20width%3D%27204%27%20height%3D%27204%27%20fill%3D%27none%27%20stroke%3D%27%230dccf2%27%20stroke-width%3D%272%27%20stroke-dasharray%3D%276%206%27%2F%3E%0A%20%20%3Cpath%20d%3D%27M26%20190%20L230%2066%27%20stroke%3D%27%23ff2079%27%20stroke-width%3D%271.5%27%20fill%3D%27none%27%20stroke-dasharray%3D%274%208%27%2F%3E%0A%20%20%3Ctext%20x%3D%2750%25%27%20y%3D%2748%25%27%20fill%3D%27%2339ff14%27%20font-family%3D%27Courier%20New%2C%20monospace%27%20font-size%3D%2748%27%20text-anchor%3D%27middle%27%3EAHARA%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2750%25%27%20y%3D%2764%25%27%20fill%3D%27%230dccf2%27%20font-family%3D%27Courier%20New%2C%20monospace%27%20font-size%3D%2718%27%20text-anchor%3D%27middle%27%3EPLACEHOLDER%3C%2Ftext%3E%0A%3C%2Fsvg%3E");
   background-size: cover;
   background-position: center;
   filter: drop-shadow(0 0 12px rgba(57, 255, 20, 0.3));
@@ -89,7 +80,7 @@ body {
 .title-customizable,
 .subtitle-customizable {
   text-align: center;
-  color: var(--ahara-accent);
+  color: #39ff14;
   letter-spacing: 0.2em;
 }
 
@@ -111,7 +102,7 @@ input[type="password"],
   background: transparent;
   border: none;
   border-bottom: 2px solid rgba(57, 255, 20, 0.6);
-  color: var(--ahara-accent);
+  color: #39ff14;
   padding: 14px 6px;
   font-size: 1rem;
   letter-spacing: 0.15em;
@@ -122,7 +113,7 @@ input[type="password"],
 input[type="text"]:focus,
 input[type="password"]:focus {
   outline: none;
-  border-bottom-color: var(--ahara-secondary);
+  border-bottom-color: #0dccf2;
   filter: drop-shadow(0 0 6px rgba(13, 204, 242, 0.6));
 }
 
@@ -173,19 +164,19 @@ input::placeholder,
 }
 
 .federationButton-customizable:hover {
-  border-color: var(--ahara-secondary);
-  color: var(--ahara-secondary);
+  border-color: #0dccf2;
+  color: #0dccf2;
 }
 
 .errorMessage-customizable {
   background: rgba(255, 32, 121, 0.08);
   border: 1px solid rgba(255, 32, 121, 0.4);
-  color: var(--ahara-danger);
+  color: #ff2079;
   letter-spacing: 0.12em;
 }
 
 a {
-  color: var(--ahara-secondary);
+  color: #0dccf2;
 }
 
 @keyframes ahara-scanline {
