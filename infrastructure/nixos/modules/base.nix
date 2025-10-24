@@ -5,7 +5,7 @@ let
     if config.homeLab.vectorStreamToken != null then
       config.homeLab.vectorStreamToken
     else
-      builtins.substring 0 12 (builtins.hashString "sha256" (builtins.toString config.system.build.toplevel));
+      builtins.substring 0 12 (builtins.hashString "sha256" (builtins.toString pkgs.path));
 in {
   options.homeLab = {
     resourcePrefix = lib.mkOption {
@@ -41,7 +41,6 @@ in {
     vectorStreamTokenComputed = lib.mkOption {
       type = lib.types.str;
       readOnly = true;
-      default = "";
       description = "Derived log stream token exposed for role modules.";
     };
   };
@@ -65,6 +64,7 @@ in {
     services.chrony.enable = true;
 
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_hardened;
+    boot.kernelParams = lib.mkDefault [ "nosmt" "mitigations=auto" ];
 
     boot.kernel.sysctl = {
       "net.ipv4.conf.all.accept_redirects" = 0;
@@ -95,7 +95,6 @@ in {
 
     security.lockKernelModules = true;
     security.protectKernelImage = true;
-    security.allowSimultaneousMultithreadedCpus = lib.mkDefault false;
     security.apparmor.enable = true;
     security.auditd.enable = true;
     security.sudo.execWheelOnly = true;
@@ -110,11 +109,7 @@ in {
       "d /var/lib/vector 0755 root root -"
     ];
 
-    services.aide = {
-      enable = true;
-      config = builtins.readFile ../files/base/aide/aide.conf;
-      timerConfig.OnCalendar = "daily";
-    };
+    environment.etc."aide/aide.conf".text = builtins.readFile ./files/base/aide/aide.conf;
 
     systemd.services.vector = lib.mkIf (config.homeLab.vectorConfig != null) {
       description = "Vector observability pipeline";

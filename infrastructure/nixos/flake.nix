@@ -3,101 +3,101 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    generators.url = "github:nix-community/nixos-generators";
   };
 
-  outputs = { self, nixpkgs }: let
-    systems = [ "x86_64-linux" ];
+  outputs = { self, nixpkgs, generators, ... }: let
+    system = "x86_64-linux";
     lib = nixpkgs.lib;
 
-    forSystems = f: lib.genAttrs systems f;
-
+    # Export modules for reuse
     modules = {
-      base = import ./modules/base.nix;
-      vectorConfig = import ./modules/vector-config.nix;
-      wireguard = import ./wireguard.nix;
-      nat = import ./nat.nix;
-      reverseProxy = import ./reverse-proxy.nix;
+      base = ./modules/base.nix;
+      wireguard = ./modules/wireguard.nix;
+      nat = ./modules/nat.nix;
+      reverseProxy = ./modules/reverse-proxy.nix;
     };
 
-    mkAmi = name: extraConfig:
+    # Profiles for different deployment targets
+    profiles = {
+      aws-ec2 = ./profiles/aws-ec2.nix;
+    };
+
+    # Create a NixOS configuration for a specific host
+    mkNixosConfiguration = name: roleModule: hostConfig:
       lib.nixosSystem {
-        system = "x86_64-linux";
+        inherit system;
         modules = [
-          "${nixpkgs}/nixos/modules/virtualisation/amazon-image.nix"
           modules.base
-          modules.${name}
-          ({ pkgs, ... }: {
-            networking.hostName = "${name}";
-            users.users.ec2-user = {
-              isNormalUser = true;
-              createHome = true;
-              uid = 1000;
-              extraGroups = [ "wheel" ];
-              shell = pkgs.bashInteractive;
-              initialHashedPassword = "*";
-            };
-          })
-          extraConfig
+          profiles.aws-ec2
+          roleModule
+          hostConfig
+          {
+            networking.hostName = name;
+          }
         ];
       };
 
-    wireguardConfig = mkAmi "wireguard" {
-      homeLab = {
-        resourcePrefix = "vpn";
-        wireguard = {
-          homeLanCidr = "192.168.66.0/24";
-          privateSubnetCidr = "10.42.20.0/24";
-          secretArn = "arn:aws:secretsmanager:us-east-1:123456789012:secret:vpn/wireguard-placeholder";
-          ssmPublicKeyPath = "/vpn/server_public_key";
-          homePeerPublicKey = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-          laptopPeerPublicKey = null;
-        };
-      };
-    };
-
-    natConfig = mkAmi "nat" {
-      homeLab = {
-        resourcePrefix = "vpn";
-        nat.privateSubnetCidr = "10.42.20.0/24";
-      };
-    };
-
-    reverseProxyConfig = mkAmi "reverseProxy" {
-      homeLab = {
-        resourcePrefix = "vpn";
-        reverseProxy.routes = {
-          "example.internal" = {
-            address = "192.168.66.3";
-            port = 3000;
-          };
-        };
-      };
+    # Host configurations
+    hosts = {
+      wireguard = mkNixosConfiguration "wireguard" modules.wireguard ./hosts/wireguard;
+      nat = mkNixosConfiguration "nat" modules.nat ./hosts/nat;
+      reverseProxy = mkNixosConfiguration "reverseProxy" modules.reverseProxy ./hosts/reverseProxy;
     };
   in {
-    nixosModules = modules;
-    lib.nixosModules = modules;
+    # Export modules for external use
+    nixosModules = modules // { inherit profiles; };
 
-    nixosConfigurations = {
-      wireguard = wireguardConfig;
-      nat = natConfig;
-      reverseProxy = reverseProxyConfig;
+    # Expose full NixOS configurations
+    nixosConfigurations = hosts;
+
+    # AMI images as packages
+    packages.${system} = {
+      default = nixpkgs.legacyPackages.${system}.writeText "vpn-nixos-modules.txt" ''
+        This flake provides NixOS modules under `.nixosModules`.
+        AMI images can be built with:
+          nix build .#wireguard-ami
+          nix build .#nat-ami
+          nix build .#reverseProxy-ami
+      '';
+
+      wireguard-ami = generators.nixosGenerate {
+        inherit system;
+        modules = [
+          modules.base
+          profiles.aws-ec2
+          modules.wireguard
+          ./hosts/wireguard
+          { networking.hostName = "wireguard"; }
+        ];
+        format = "amazon";
+      };
+
+      nat-ami = generators.nixosGenerate {
+        inherit system;
+        modules = [
+          modules.base
+          profiles.aws-ec2
+          modules.nat
+          ./hosts/nat
+          { networking.hostName = "nat"; }
+        ];
+        format = "amazon";
+      };
+
+      reverseProxy-ami = generators.nixosGenerate {
+        inherit system;
+        modules = [
+          modules.base
+          profiles.aws-ec2
+          modules.reverseProxy
+          ./hosts/reverseProxy
+          { networking.hostName = "reverseProxy"; }
+        ];
+        format = "amazon";
+      };
     };
 
-    packages = forSystems (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in {
-        default = pkgs.writeText "vpn-nixos-modules.txt" ''
-          This flake provides NixOS modules under `.nixosModules`.
-          See `README.md` for build instructions.
-        '';
-        wireguard-ami = self.nixosConfigurations.wireguard.config.system.build.amazonImage;
-        nat-ami = self.nixosConfigurations.nat.config.system.build.amazonImage;
-        reverse-proxy-ami = self.nixosConfigurations.reverseProxy.config.system.build.amazonImage;
-      });
-
-    formatter = forSystems (system:
-      let pkgs = import nixpkgs { inherit system; };
-      in pkgs.alejandra);
+    formatter.${system} = nixpkgs.legacyPackages.${system}.alejandra;
   };
 }

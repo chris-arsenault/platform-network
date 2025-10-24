@@ -1,10 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
-  base = import ./modules/base.nix;
-  renderVector = import ./modules/vector-config.nix { inherit lib; };
+  renderVector = import ./vector-config.nix { inherit lib; };
 in {
-  imports = [ base ];
 
   options.homeLab.reverseProxy = {
     routes = lib.mkOption {
@@ -84,8 +82,10 @@ in {
                 proxy_set_header Connection "";
               '';
             };
-            accessLog = "/var/log/nginx/${host}_access.log";
-            errorLog = "/var/log/nginx/${host}_error.log warn";
+            extraConfig = ''
+              access_log /var/log/nginx/${host}_access.log;
+              error_log /var/log/nginx/${host}_error.log warn;
+            '';
           })
           cfg.routes;
     in {

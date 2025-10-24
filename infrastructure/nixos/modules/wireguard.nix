@@ -1,10 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
-  base = import ./modules/base.nix;
-  renderVector = import ./modules/vector-config.nix { inherit lib; };
+  renderVector = import ./vector-config.nix { inherit lib; };
 in {
-  imports = [ base ];
 
   options.homeLab.wireguard = {
     port = lib.mkOption {
@@ -68,20 +66,21 @@ in {
       cfg = config.homeLab.wireguard;
       region = config.homeLab.vectorRegion;
       streamToken = config.homeLab.vectorStreamTokenComputed;
-      primaryInterface = config.networking.primaryInterface;
+      primaryInterface = config.networking.primaryInterface or null;
       externalIface =
         if cfg.externalInterface != null then cfg.externalInterface
         else if primaryInterface != null then primaryInterface
         else "eth0";
 
-      keySyncScript = lib.substituteAll {
-        src = ../files/wireguard/bin/wireguard-key-sync.sh;
+      keySyncScript = pkgs.substituteAll {
+        src = ./wireguard/wireguard-key-sync.sh;
+        isExecutable = true;
         curl = "${pkgs.curl}/bin/curl";
         aws = "${pkgs.awscli2}/bin/aws";
         jq = "${pkgs.jq}/bin/jq";
+        wg = "${pkgs.wireguard-tools}/bin/wg";
         mkdir = "${pkgs.coreutils}/bin/mkdir";
         chmod = "${pkgs.coreutils}/bin/chmod";
-        wg = "${pkgs.wireguard-tools}/bin/wg";
         tee = "${pkgs.coreutils}/bin/tee";
         cat = "${pkgs.coreutils}/bin/cat";
         secretArn = cfg.secretArn;

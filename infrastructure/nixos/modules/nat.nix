@@ -1,10 +1,8 @@
 { config, lib, pkgs, ... }:
 
 let
-  base = import ./modules/base.nix;
-  renderVector = import ./modules/vector-config.nix { inherit lib; };
+  renderVector = import ./vector-config.nix { inherit lib; };
 in {
-  imports = [ base ];
 
   options.homeLab.nat = {
     privateSubnetCidr = lib.mkOption {
@@ -22,7 +20,7 @@ in {
   config =
     let
       cfg = config.homeLab.nat;
-      primaryInterface = config.networking.primaryInterface;
+      primaryInterface = config.networking.primaryInterface or null;
       externalIface =
         if cfg.externalInterface != null then cfg.externalInterface
         else if primaryInterface != null then primaryInterface
@@ -65,7 +63,6 @@ in {
       networking.firewall = {
         enable = true;
         allowPing = true;
-        allowForwardedTraffic = true;
       };
 
       networking.nat = {
