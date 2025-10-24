@@ -70,5 +70,24 @@ Then author a host configuration that imports the desired module(s) from
    - `nat_ami_id`
    - `reverse_proxy_ami_id`
 
+### Local builds
+
+Example targets are pre-wired in the repository flake. To build AMIs locally:
+
+```bash
+# WireGuard hub AMI (output is ./result)
+nix build .#wireguard-ami
+
+# NAT instance AMI
+nix build .#nat-ami
+
+# Reverse proxy AMI
+nix build .#reverse-proxy-ami
+```
+
+Each build produces a raw AMI bundle under `result/` that can be uploaded with
+`aws ec2 import-image` or other preferred tooling. Update the placeholder values in
+`flake.nix` (for peer keys, upstream routes, etc.) before producing production images.
+
 With the configuration rendered by Nix, EC2 instances only require minimal post-boot actions,
 and Terraform no longer needs to ship large `user_data` payloads.
