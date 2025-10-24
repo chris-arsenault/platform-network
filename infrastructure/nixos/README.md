@@ -90,5 +90,12 @@ Each build produces a raw AMI bundle under `result/` that can be uploaded with
 `aws ec2 import-image` or other preferred tooling. Update the placeholder values in
 `flake.nix` (for peer keys, upstream routes, etc.) before producing production images.
 
+### CI publishing
+
+The GitHub Actions workflow (`.github/workflows/deploy.yml`) builds the three AMIs,
+uploads them to EC2 via `aws ec2 import-image`, and stores the resulting IDs in SSM
+parameters under `/${PREFIX}/amis/<role>`. Terraform reads those parameters directly,
+so no manual wiring of AMI IDs is required once the pipeline succeeds.
+
 With the configuration rendered by Nix, EC2 instances only require minimal post-boot actions,
 and Terraform no longer needs to ship large `user_data` payloads.

@@ -2,7 +2,7 @@
 Use this guide when extending the Terraform that exposes the home-lab NAS through an AWS WireGuard hub.
 
 ## Project Structure & Module Organization
-- `infrastructure/terraform/` houses the entire stack (`providers.tf`, `main.tf`, `variables.tf`, `outputs.tf`, and `terraform.tfvars`).
+- `infrastructure/terraform/` houses the entire stack (`providers.tf`, `main.tf`, `variables.tf`, `outputs.tf`, and `terraform.tfvars`). See `infrastructure/terraform/README.md` for usage details.
 - WireGuard cloud resources live directly in `main.tf`; use locals for opinionated defaults unless a value must come from tfvars.
 - `infrastructure/nixos/` contains the shared NixOS base layer plus the WireGuard, NAT, and reverse-proxy host modules used when baking AMIs.
 - `infrastructure/terraform/templates/` now only carries supporting assets (for example Cognito branding and WireGuard peer samples); never commit real keys or PSKs.
@@ -10,7 +10,7 @@ Use this guide when extending the Terraform that exposes the home-lab NAS throug
 ## Build, Test, and Development Commands
 - `terraform init` sets up providers, remote state, and module caches; rerun after backend or provider version changes.
 - `terraform fmt -recursive` and `terraform validate` enforce formatting and schema checks; pair them with `tflint --config .tflint.hcl` for AWS linting.
-- `terraform plan -out plan.tfplan` previews infrastructure changes; apply with `terraform apply plan.tfplan` only after review.
+- `terraform plan -out plan.tfplan` previews infrastructure changes; apply with `terraform apply plan.tfplan` only after review. AMI IDs are sourced from SSM parameters populated by the CI AMI publish step—no manual overrides should be required.
 - `terraform output -raw home_peer_config` prints the NAS WireGuard config generated from `peer_home.conf.tpl`; rerun after the EC2 instance finishes bootstrapping (or run `terraform refresh`) so the server public key has been captured.
 
 ## Coding Style & Naming Conventions
@@ -21,7 +21,7 @@ Use this guide when extending the Terraform that exposes the home-lab NAS throug
 ## Testing Guidelines
 - Run `terraform validate` and `tflint` on every branch; add Terratest cases in `test/` for module-level assertions (CIDRs, subnet counts, security rules).
 - After `terraform apply`, verify that `terraform plan` reports “No changes” to guard against configuration drift.
-- Update routing notes in `docs/peering-matrix.md` whenever peer IPs, ports, or AllowedIPs change so NAS call-home instructions stay accurate.
+- Update routing notes in `docs/peering-matrix.md` whenever peer IPs, ports, or AllowedIPs change so NAS call-home instructions stay accurate. Confirm that the AMI publishing workflow (`.github/workflows/deploy.yml`) succeeds so Terraform consumes fresh images.
 
 ## Commit & Pull Request Guidelines
 - Follow Conventional Commits (`feat:`, `fix:`, `infra:`, `chore:`, `docs:`) with ≤72-character summaries and optional ticket IDs like `VPN-123`.

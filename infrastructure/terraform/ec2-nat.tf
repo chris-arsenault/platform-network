@@ -17,7 +17,7 @@ module "nat" {
   source = "./modules/ec2_instance"
 
   name                 = "${local.prefix}-nat"
-  ami_id               = var.nat_ami_id
+  ami_id               = trimspace(data.aws_ssm_parameter.ami_nat.value)
   iam_instance_profile = aws_iam_instance_profile.nat.name
   subnet_id            = aws_subnet.public.id
   security_group_ids   = [aws_security_group.nat.id]

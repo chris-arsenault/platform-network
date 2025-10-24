@@ -56,6 +56,17 @@ jobs:
           role-session-name: GitHubActions-${{ github.run_id }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+
+      - name: Build and publish Nix AMIs
+        working-directory: .
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          AMI_BUCKET: ${{ secrets.AMI_BUCKET }}
+          AMI_SSM_PREFIX: /${{ secrets.PREFIX }}/amis
+        run: ./infrastructure/nixos/scripts/publish-amis.sh
+
       - name: Terraform Format Check
         id: fmt
         run: terraform fmt -check -recursive
