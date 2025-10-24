@@ -25,27 +25,43 @@ overrides (for example, hostname, users, or extra packages).
 
 ## Building AMIs
 
-1. Instantiate a NixOS configuration that imports the desired role module:
+This directory is part of the repository flake (see `flake.nix`). The flake exposes
+each module via `nixosModules`. To consume a module outside this repo you can run:
 
-   ```nix
-   { inputs, ... }: {
-     imports = [
-       ./wireguard.nix
-     ];
+```bash
+nix eval ".#nixosModules.wireguard"
+```
 
-     homeLab = {
-       resourcePrefix = "vpn";
-       wireguard = {
-         homeLanCidr        = "192.168.66.0/24";
-         privateSubnetCidr  = "10.42.20.0/24";
-         secretArn          = "arn:aws:secretsmanager:us-east-1:123456789012:secret:vpn/wireguard";
-         ssmPublicKeyPath   = "/vpn/server_public_key";
-         homePeerPublicKey  = "<NAS public key>";
-         laptopPeerPublicKey = null;
-       };
-     };
-   }
-   ```
+When starting a new image configuration, clone this repository and create a lock file:
+
+```bash
+nix flake lock
+```
+
+Then author a host configuration that imports the desired module(s) from
+`self.nixosModules`, for example:
+
+```nix
+{ inputs, ... }: {
+  imports = [
+    inputs.self.nixosModules.base
+    inputs.self.nixosModules.wireguard
+  ];
+
+  homeLab = {
+    resourcePrefix = "vpn";
+    wireguard = {
+      homeLanCidr       = "192.168.66.0/24";
+      privateSubnetCidr = "10.42.20.0/24";
+      secretArn         = "arn:aws:secretsmanager:us-east-1:123456789012:secret:vpn/wireguard";
+      ssmPublicKeyPath  = "/vpn/server_public_key";
+      homePeerPublicKey = "<NAS public key>";
+    };
+  };
+}
+```
+
+1. Instantiate a NixOS configuration (similar to the example above) that imports the desired role modules from the flake and sets any required `homeLab` options.
 
 2. Build the image using your preferred tooling (`nix build`, `nixos-rebuild`, or `nix run`
    wrappers such as `nixos-generators` or `nixos-anywhere`).

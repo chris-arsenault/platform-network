@@ -66,9 +66,6 @@ in {
 
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_hardened;
 
-    environment.etc."profile.d/00-secure-umask.sh".source =
-      ../files/base/profile/00-secure-umask.sh;
-
     boot.kernel.sysctl = {
       "net.ipv4.conf.all.accept_redirects" = 0;
       "net.ipv4.conf.default.accept_redirects" = 0;
