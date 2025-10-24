@@ -4,7 +4,8 @@ Use this guide when extending the Terraform that exposes the home-lab NAS throug
 ## Project Structure & Module Organization
 - `infrastructure/terraform/` houses the entire stack (`providers.tf`, `main.tf`, `variables.tf`, `outputs.tf`, and `terraform.tfvars`).
 - WireGuard cloud resources live directly in `main.tf`; use locals for opinionated defaults unless a value must come from tfvars.
-- `infrastructure/terraform/templates/` stores the instance `user_data.sh.tpl`. Sanitized peer samples stay in `config/`; never commit real keys or PSKs.
+- `infrastructure/nixos/` contains the shared NixOS base layer plus the WireGuard, NAT, and reverse-proxy host modules used when baking AMIs.
+- `infrastructure/terraform/templates/` now only carries supporting assets (for example Cognito branding and WireGuard peer samples); never commit real keys or PSKs.
 
 ## Build, Test, and Development Commands
 - `terraform init` sets up providers, remote state, and module caches; rerun after backend or provider version changes.

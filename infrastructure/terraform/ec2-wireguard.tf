@@ -47,60 +47,8 @@ module "wireguard" {
   source = "./modules/ec2_instance"
 
   name                 = "${local.prefix}-wireguard-server"
+  ami_id               = var.wireguard_ami_id
   iam_instance_profile = aws_iam_instance_profile.wireguard.name
   subnet_id            = aws_subnet.private.id
   security_group_ids   = [aws_security_group.wireguard.id]
-
-  user_data = templatefile("${path.module}/templates/common_user_data.sh.tpl", {
-    EXTRA_SNIPPET = templatefile("${path.module}/templates/wireguard_user_data.sh.tpl", {
-      WG_PORT             = local.wireguard_port
-      WG_CIDR             = local.wireguard_cidr
-      WG_CIDR_HOST        = local.wireguard_cidr_host
-      HOME_LAN_CIDR       = var.home_lan_cidr
-      HOME_PEER_PUBKEY    = var.home_peer_public_key
-      LAPTOP_PEER_PUBKEY  = local.laptop_peer_public_key
-      PRIVATE_SUBNET_CIDR = local.private_subnet_cidr
-      SSM_PUBLIC_KEY_PATH = local.ssm_public_key_path
-      AWS_REGION          = "us-east-1"
-      SECRET_ID           = aws_secretsmanager_secret.wg_keys.id
-    })
-    HARDENING_SCRIPT        = local.hardening_script
-    VECTOR_SERVICE_UNIT     = local.vector_service_unit
-    VECTOR_SERVICE_OVERRIDE = local.vector_service_override
-    VECTOR_CONFIG = templatefile("${path.module}/templates/vector_config.toml.tpl", {
-      file_logs = []
-      journal_logs = [
-        {
-          match_field     = "SYSTEMD_UNIT"
-          match_value     = "wg-quick@wg0.service"
-          log_group_name  = aws_cloudwatch_log_group.wireguard.name
-          log_stream_name = "{instance_id}/wg-quick"
-        },
-        {
-          match_field     = "SYSTEMD_UNIT"
-          match_value     = "wg-healthcheck.service"
-          log_group_name  = aws_cloudwatch_log_group.wireguard.name
-          log_stream_name = "{instance_id}/wg-healthcheck"
-        },
-        {
-          match_field     = "SYSLOG_IDENTIFIER"
-          match_value     = "kernel"
-          log_group_name  = aws_cloudwatch_log_group.wireguard.name
-          log_stream_name = "{instance_id}/kernel"
-        },
-        {
-          match_field     = "SYSLOG_IDENTIFIER"
-          match_value     = "sshd"
-          log_group_name  = aws_cloudwatch_log_group.wireguard.name
-          log_stream_name = "{instance_id}/journal-sshd"
-        },
-        {
-          match_field     = "SYSLOG_IDENTIFIER"
-          match_value     = "auditd"
-          log_group_name  = aws_cloudwatch_log_group.wireguard.name
-          log_stream_name = "{instance_id}/journal-audit"
-        }
-      ]
-    })
-  })
 }

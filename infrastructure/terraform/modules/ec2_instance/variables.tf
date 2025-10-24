@@ -1,3 +1,8 @@
+variable "ami_id" {
+  description = "AMI ID used for the launch template."
+  type        = string
+}
+
 variable "name" {
   description = "Base name used for resource tags."
   type        = string
@@ -22,6 +27,7 @@ variable "security_group_ids" {
 variable "user_data" {
   description = "Rendered user data to bootstrap the instance."
   type        = string
+  default     = ""
 }
 
 variable "associate_eip" {
