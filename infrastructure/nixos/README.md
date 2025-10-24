@@ -26,26 +26,27 @@ overrides (for example, hostname, users, or extra packages).
 ## Building AMIs
 
 This directory is part of the repository flake (see `flake.nix`). The flake exposes
-each module via `nixosModules`. To consume a module outside this repo you can run:
+each module via `nixosModules`. To inspect a module from the repository root you can run:
 
 ```bash
-nix eval ".#nixosModules.wireguard"
+nix eval ./infrastructure/nixos#nixosModules.wireguard
 ```
 
 When starting a new image configuration, clone this repository and create a lock file:
 
 ```bash
+cd infrastructure/nixos
 nix flake lock
 ```
 
 Then author a host configuration that imports the desired module(s) from
-`self.nixosModules`, for example:
+`inputs.vpn.nixosModules` (assuming this flake is added as `vpn`), for example:
 
 ```nix
 { inputs, ... }: {
   imports = [
-    inputs.self.nixosModules.base
-    inputs.self.nixosModules.wireguard
+    inputs.vpn.nixosModules.base
+    inputs.vpn.nixosModules.wireguard
   ];
 
   homeLab = {
@@ -76,13 +77,13 @@ Example targets are pre-wired in the repository flake. To build AMIs locally:
 
 ```bash
 # WireGuard hub AMI (output is ./result)
-nix build .#wireguard-ami
+nix build ./infrastructure/nixos#wireguard-ami
 
 # NAT instance AMI
-nix build .#nat-ami
+nix build ./infrastructure/nixos#nat-ami
 
 # Reverse proxy AMI
-nix build .#reverse-proxy-ami
+nix build ./infrastructure/nixos#reverse-proxy-ami
 ```
 
 Each build produces a raw AMI bundle under `result/` that can be uploaded with
