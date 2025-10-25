@@ -47,7 +47,7 @@ module "wireguard" {
   source = "./modules/ec2_instance"
 
   name                 = "${local.prefix}-wireguard-server"
-  ami_id               = trimspace(data.aws_ssm_parameter.ami_wireguard.value)
+  ami_id               = local.ami_ids.wireguard
   iam_instance_profile = aws_iam_instance_profile.wireguard.name
   subnet_id            = aws_subnet.private.id
   security_group_ids   = [aws_security_group.wireguard.id]

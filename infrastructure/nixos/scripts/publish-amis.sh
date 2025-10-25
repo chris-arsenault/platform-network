@@ -7,6 +7,12 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 : "${AMI_BUCKET:?AMI_BUCKET must be set}"
 : "${AMI_SSM_PREFIX:?AMI_SSM_PREFIX must be set}"
 
+echo "Verifying AMI staging bucket ${AMI_BUCKET} exists..."
+if ! aws s3api head-bucket --bucket "${AMI_BUCKET}" >/dev/null 2>&1; then
+  echo "AMI staging bucket ${AMI_BUCKET} is not accessible. Run Terraform to create it before publishing AMIs." >&2
+  exit 1
+fi
+
 timestamp="$(date +%Y%m%d%H%M%S)"
 build_dir="$(mktemp -d)"
 trap 'rm -rf "$build_dir"' EXIT

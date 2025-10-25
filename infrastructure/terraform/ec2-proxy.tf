@@ -17,7 +17,7 @@ module "reverse_proxy" {
   source = "./modules/ec2_instance"
 
   name                 = "${local.prefix}-reverse-proxy"
-  ami_id               = trimspace(data.aws_ssm_parameter.ami_reverse_proxy.value)
+  ami_id               = local.ami_ids.reverse_proxy
   iam_instance_profile = aws_iam_instance_profile.reverse_proxy.name
   subnet_id            = aws_subnet.private.id
   security_group_ids   = [aws_security_group.reverse_proxy.id]
