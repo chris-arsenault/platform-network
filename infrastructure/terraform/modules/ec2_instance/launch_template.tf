@@ -1,8 +1,8 @@
 resource "aws_launch_template" "this" {
   name_prefix   = "${var.name}-"
-  image_id      = data.aws_ssm_parameter.al2023_ami.value
+  image_id      = var.ami_id
   instance_type = var.instance_type
-  user_data     = base64encode(var.user_data)
+  user_data     = var.user_data != "" ? base64encode(var.user_data) : null
 
   dynamic "iam_instance_profile" {
     for_each = var.iam_instance_profile == null ? [] : [var.iam_instance_profile]
