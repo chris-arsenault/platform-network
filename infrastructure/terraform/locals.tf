@@ -37,4 +37,5 @@ locals {
   reverse_proxy_primary_hostname = local.reverse_proxy_hostnames[0]
   reverse_proxy_sans             = [for host in local.reverse_proxy_hostnames : host if host != local.reverse_proxy_primary_hostname]
   route53_zone_id                = data.aws_route53_zone.root.zone_id
+  ami_bucket_name                = "${local.prefix}-amis"
 }
