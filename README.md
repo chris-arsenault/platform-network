@@ -24,5 +24,6 @@ The `deploy.yml` workflow:
 2. Runs `terraform plan`/`apply`, relying on Terraform data sources to pick up the
    freshly published AMI IDs.
 
-Ensure the GitHub secrets `OIDC_ROLE`, `AMI_BUCKET`, `PREFIX`, `TRUENAS_PUB_KEY`,
-`HOME_LAN_CIDR`, and `DOMAIN` are set before triggering deployments.
+Ensure the GitHub secrets `OIDC_ROLE`, `PREFIX`, `TRUENAS_PUB_KEY`, `HOME_LAN_CIDR`,
+and `DOMAIN` are set before triggering deployments. The AMI publish step now derives
+the staging bucket name as `${PREFIX}-amis`, matching the Terraform configuration.

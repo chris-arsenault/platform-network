@@ -63,7 +63,7 @@ jobs:
         working-directory: .
         env:
           AWS_REGION: ${{ env.AWS_REGION }}
-          AMI_BUCKET: ${{ env.TF_AMI_BUCKET }}
+          AMI_BUCKET: ${{ secrets.PREFIX }}-amis
           AMI_SSM_PREFIX: /${{ secrets.PREFIX }}/amis
         run: ./infrastructure/nixos/scripts/publish-amis.sh
 
