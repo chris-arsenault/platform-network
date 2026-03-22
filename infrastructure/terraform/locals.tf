@@ -33,7 +33,6 @@ locals {
   azs                            = slice(data.aws_availability_zones.available.names, 0, 2)
   az                             = local.azs[0]
   az_secondary                   = local.azs[1]
-  cognito_auth_domain            = "auth.${var.root_domain_name}"
   reverse_proxy_hostnames        = sort(keys(local.reverse_proxy_routes))
   reverse_proxy_primary_hostname = local.reverse_proxy_hostnames[0]
   reverse_proxy_sans             = [for host in local.reverse_proxy_hostnames : host if host != local.reverse_proxy_primary_hostname]

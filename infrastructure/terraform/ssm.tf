@@ -69,22 +69,3 @@ resource "aws_ssm_parameter" "route53_zone_id" {
   type  = "String"
   value = local.route53_zone_id
 }
-
-# Cognito details for ALB auth (consuming projects need these for authenticate-cognito actions)
-resource "aws_ssm_parameter" "alb_cognito_pool_arn" {
-  name  = "/platform/network/alb-cognito-pool-arn"
-  type  = "String"
-  value = aws_cognito_user_pool.alb.arn
-}
-
-resource "aws_ssm_parameter" "alb_cognito_client_id" {
-  name  = "/platform/network/alb-cognito-client-id"
-  type  = "String"
-  value = aws_cognito_user_pool_client.alb.id
-}
-
-resource "aws_ssm_parameter" "alb_cognito_domain" {
-  name  = "/platform/network/alb-cognito-domain"
-  type  = "String"
-  value = aws_cognito_user_pool_domain.alb.domain
-}

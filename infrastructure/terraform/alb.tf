@@ -95,9 +95,9 @@ resource "aws_lb_listener_rule" "reverse_proxy" {
     order = 1
 
     authenticate_cognito {
-      user_pool_arn              = aws_cognito_user_pool.alb.arn
-      user_pool_client_id        = aws_cognito_user_pool_client.alb.id
-      user_pool_domain           = aws_cognito_user_pool_domain.alb.domain
+      user_pool_arn              = nonsensitive(data.aws_ssm_parameter.cognito_user_pool_arn.value)
+      user_pool_client_id        = nonsensitive(data.aws_ssm_parameter.alb_cognito_client_id.value)
+      user_pool_domain           = nonsensitive(data.aws_ssm_parameter.cognito_domain.value)
       on_unauthenticated_request = "authenticate"
       scope                      = "openid email profile"
       session_cookie_name        = "alb-auth"
