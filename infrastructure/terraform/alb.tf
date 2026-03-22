@@ -66,7 +66,33 @@ resource "aws_lb_listener" "https" {
   certificate_arn   = aws_acm_certificate_validation.reverse_proxy.certificate_arn
 
   default_action {
-    type = "authenticate-cognito"
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Not Found"
+      status_code  = "404"
+    }
+  }
+
+  depends_on = [aws_acm_certificate_validation.reverse_proxy]
+}
+
+# --- Reverse proxy listener rule (Cognito auth + forward to on-prem) ---
+
+resource "aws_lb_listener_rule" "reverse_proxy" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 100
+
+  condition {
+    host_header {
+      values = local.reverse_proxy_hostnames
+    }
+  }
+
+  action {
+    type  = "authenticate-cognito"
+    order = 1
 
     authenticate_cognito {
       user_pool_arn              = aws_cognito_user_pool.alb.arn
@@ -79,10 +105,9 @@ resource "aws_lb_listener" "https" {
     }
   }
 
-  default_action {
+  action {
     type             = "forward"
+    order            = 2
     target_group_arn = aws_lb_target_group.reverse_proxy.arn
   }
-
-  depends_on = [aws_acm_certificate_validation.reverse_proxy]
 }
