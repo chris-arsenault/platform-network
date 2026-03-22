@@ -18,6 +18,7 @@ locals {
   public_subnet_cidr     = "10.42.10.0/24"
   public_subnet_cidr_b   = "10.42.11.0/24"
   private_subnet_cidr    = "10.42.20.0/24"
+  private_subnet_cidr_b  = "10.42.21.0/24"
   allowed_cidrs          = ["0.0.0.0/0"]
   allowed_ipv6_cidrs     = []
   laptop_peer_public_key = trimspace(var.laptop_peer_public_key)

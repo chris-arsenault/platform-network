@@ -58,10 +58,10 @@ resource "aws_ssm_parameter" "public_subnet_ids" {
   value = join(",", [aws_subnet.public.id, aws_subnet.public_b.id])
 }
 
-resource "aws_ssm_parameter" "private_subnet_id" {
-  name  = "/platform/network/private-subnet-id"
-  type  = "String"
-  value = aws_subnet.private.id
+resource "aws_ssm_parameter" "private_subnet_ids" {
+  name  = "/platform/network/private-subnet-ids"
+  type  = "StringList"
+  value = join(",", [aws_subnet.private.id, aws_subnet.private_b.id])
 }
 
 resource "aws_ssm_parameter" "route53_zone_id" {
