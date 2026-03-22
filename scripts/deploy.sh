@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TF_DIR="${ROOT_DIR}/infrastructure/terraform"
 
-STATE_BUCKET="${STATE_BUCKET:-tf-state-vpn-559098897826}"
+STATE_BUCKET="${STATE_BUCKET:-tfstate-559098897826}"
 STATE_REGION="${STATE_REGION:-us-east-1}"
 
 terraform -chdir="${TF_DIR}" init \
