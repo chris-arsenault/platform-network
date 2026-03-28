@@ -75,19 +75,8 @@ resource "aws_lb_listener" "https" {
     }
   }
 
-  # Response headers applied to all responses from this listener
-  listener_attributes {
-    key   = "routing.http.response.access_control_allow_origin.header_value"
-    value = "*"
-  }
-  listener_attributes {
-    key   = "routing.http.response.access_control_allow_methods.header_value"
-    value = "GET, POST, PUT, DELETE, OPTIONS, HEAD"
-  }
-  listener_attributes {
-    key   = "routing.http.response.access_control_allow_headers.header_value"
-    value = "Authorization, Content-Type"
-  }
+  # MCP OAuth discovery: ALB returns WWW-Authenticate on 401 so clients
+  # can find the protected resource metadata endpoint.
   listener_attributes {
     key   = "routing.http.response.www_authenticate.header_value"
     value = "Bearer"
