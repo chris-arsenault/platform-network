@@ -75,11 +75,6 @@ resource "aws_lb_listener" "https" {
     }
   }
 
-  listener_attributes {
-    key   = "routing.http.response.www_authenticate.header_value"
-    value = "Bearer"
-  }
-
   depends_on = [aws_acm_certificate_validation.reverse_proxy]
 }
 
