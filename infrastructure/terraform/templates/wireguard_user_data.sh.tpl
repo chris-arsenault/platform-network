@@ -87,7 +87,27 @@ PersistentKeepalive = 25
 EOF
 fi
 
+dnf -y install dnsmasq
+
+cat >/etc/dnsmasq.d/wg-forward.conf <<EOF
+interface=wg0
+bind-interfaces
+listen-address=${WG_SERVER_IP}
+server=${VPC_DNS}
+no-resolv
+cache-size=1000
+EOF
+
+mkdir -p /etc/systemd/system/dnsmasq.service.d
+cat >/etc/systemd/system/dnsmasq.service.d/after-wg.conf <<EOF
+[Unit]
+After=wg-quick@wg0.service
+Requires=wg-quick@wg0.service
+EOF
+
+systemctl daemon-reload
 systemctl enable --now wg-quick@wg0
+systemctl enable --now dnsmasq
 
 cat >/etc/systemd/system/wg-healthcheck.service <<'EOF'
 [Unit]

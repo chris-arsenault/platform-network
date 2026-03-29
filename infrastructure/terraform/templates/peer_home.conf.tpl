@@ -10,7 +10,7 @@
 PrivateKey = <HOME_PRIVATE_KEY>
 # Use one address inside the WG CIDR; .2 is common if server uses .1
 Address = ${WG_ADDRESS}
-# Optional: DNS = 1.1.1.1
+DNS = ${WG_DNS}
 
 [Peer]
 PublicKey = ${SERVER_PUBKEY}

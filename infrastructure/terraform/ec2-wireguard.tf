@@ -63,6 +63,8 @@ module "wireguard" {
       SSM_PUBLIC_KEY_PATH = local.ssm_public_key_path
       AWS_REGION          = "us-east-1"
       SECRET_ID           = aws_secretsmanager_secret.wg_keys.id
+      WG_SERVER_IP        = cidrhost(local.wireguard_cidr, 1)
+      VPC_DNS             = cidrhost(local.vpc_cidr, 2)
     })
     HARDENING_SCRIPT        = local.hardening_script
     VECTOR_SERVICE_UNIT     = local.vector_service_unit

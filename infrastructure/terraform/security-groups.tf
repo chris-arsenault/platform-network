@@ -105,6 +105,22 @@ resource "aws_security_group" "wireguard" {
   }
 
   ingress {
+    description = "DNS from WireGuard peers"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = [local.wireguard_cidr]
+  }
+
+  ingress {
+    description = "DNS TCP from WireGuard peers"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = [local.wireguard_cidr]
+  }
+
+  ingress {
     description = "Health check from VPC"
     from_port   = 31000
     to_port     = 31000
