@@ -56,8 +56,8 @@ module "wireguard" {
       WG_PORT             = local.wireguard_port
       WG_CIDR             = local.wireguard_cidr
       WG_CIDR_HOST        = local.wireguard_cidr_host
-      HOME_LAN_CIDR       = var.home_lan_cidr
-      HOME_PEER_PUBKEY    = var.home_peer_public_key
+      HOME_LAN_CIDR       = local.home_lan_cidr
+      HOME_PEER_PUBKEY    = local.home_peer_public_key
       LAPTOP_PEER_PUBKEY  = local.laptop_peer_public_key
       PRIVATE_SUBNET_CIDR = local.private_subnet_cidr
       SSM_PUBLIC_KEY_PATH = local.ssm_public_key_path

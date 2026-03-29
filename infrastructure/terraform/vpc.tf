@@ -84,7 +84,7 @@ resource "aws_route_table_association" "public_b" {
 # Route from PRIVATE subnet to WG clients via the EC2 instance
 resource "aws_route" "private_to_wg_via_lan" {
   route_table_id         = aws_route_table.private.id
-  destination_cidr_block = var.home_lan_cidr
+  destination_cidr_block = local.home_lan_cidr
   network_interface_id   = module.wireguard.primary_network_interface_id
 }
 

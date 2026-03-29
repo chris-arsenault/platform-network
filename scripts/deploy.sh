@@ -12,5 +12,4 @@ terraform -chdir="${TF_DIR}" init -reconfigure \
   -backend-config="region=${STATE_REGION}" \
   -backend-config="use_lockfile=true"
 
-terraform -chdir="${TF_DIR}" apply -auto-approve \
-  -var-file="${TF_DIR}/local.tfvars"
+terraform -chdir="${TF_DIR}" apply -auto-approve

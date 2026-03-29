@@ -5,12 +5,13 @@ data "aws_availability_zones" "available" {
 data "aws_caller_identity" "current" {}
 
 data "aws_route53_zone" "root" {
-  name         = var.root_domain_name
+  name         = "ahara.io."
   private_zone = false
 }
 
 locals {
-  prefix                 = var.prefix
+  prefix                 = "vpn"
+  root_domain_name       = "ahara.io"
   wireguard_port         = 51820
   wireguard_cidr         = "10.200.0.0/24"
   wireguard_cidr_host    = "10.200.0.1/24"
@@ -21,7 +22,7 @@ locals {
   private_subnet_cidr_b  = "10.42.21.0/24"
   allowed_cidrs          = ["0.0.0.0/0"]
   allowed_ipv6_cidrs     = []
-  laptop_peer_public_key = trimspace(var.laptop_peer_public_key)
+  laptop_peer_public_key = ""
   ssm_public_key_path    = "/${local.prefix}/server_public_key"
   home_peer_address      = format("%s/32", cidrhost(local.wireguard_cidr, 2))
   reverse_proxy_routes = {
