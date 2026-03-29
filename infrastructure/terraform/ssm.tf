@@ -64,6 +64,12 @@ resource "aws_ssm_parameter" "private_subnet_ids" {
   value = join(",", [aws_subnet.private.id, aws_subnet.private_b.id])
 }
 
+resource "aws_ssm_parameter" "lambda_security_group_id" {
+  name  = "/platform/network/lambda-security-group-id"
+  type  = "String"
+  value = aws_security_group.platform_lambda.id
+}
+
 resource "aws_ssm_parameter" "route53_zone_id" {
   name  = "/platform/network/route53-zone-id"
   type  = "String"

@@ -90,6 +90,24 @@ resource "aws_security_group" "reverse_proxy" {
   }
 }
 
+resource "aws_security_group" "platform_lambda" {
+  name        = "${local.prefix}-platform-lambda-sg"
+  description = "Shared security group for platform VPC Lambdas"
+  vpc_id      = aws_vpc.this.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name    = "${local.prefix}-platform-lambda-sg"
+    project = local.prefix
+  }
+}
+
 resource "aws_security_group" "wireguard" {
   name        = "${local.prefix}-sg"
   description = "WireGuard access controls"
@@ -134,6 +152,14 @@ resource "aws_security_group" "wireguard" {
     to_port         = 65535
     protocol        = "tcp"
     security_groups = [aws_security_group.reverse_proxy.id]
+  }
+
+  ingress {
+    description     = "Komodo API from platform Lambdas"
+    from_port       = 30160
+    to_port         = 30160
+    protocol        = "tcp"
+    security_groups = [aws_security_group.platform_lambda.id]
   }
 
   egress {
