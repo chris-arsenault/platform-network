@@ -146,12 +146,15 @@ resource "aws_security_group" "wireguard" {
     cidr_blocks = [local.vpc_cidr]
   }
 
-  ingress {
-    description     = "Allow TCP from reverse proxy"
-    from_port       = 0
-    to_port         = 65535
-    protocol        = "tcp"
-    security_groups = [aws_security_group.reverse_proxy.id]
+  dynamic "ingress" {
+    for_each = local.reverse_proxy_routes
+    content {
+      description     = "${ingress.key} from reverse proxy"
+      from_port       = ingress.value.port
+      to_port         = ingress.value.port
+      protocol        = "tcp"
+      security_groups = [aws_security_group.reverse_proxy.id]
+    }
   }
 
   ingress {
