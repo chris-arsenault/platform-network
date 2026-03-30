@@ -163,11 +163,11 @@ resource "aws_security_group" "wireguard" {
   }
 
   ingress {
-    description = "TrueNAS Postgres from private subnets"
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = [local.private_subnet_cidr, local.private_subnet_cidr_b]
+    description     = "TrueNAS Postgres from platform Lambdas"
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.platform_lambda.id]
   }
 
   egress {
