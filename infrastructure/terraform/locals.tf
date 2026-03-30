@@ -30,6 +30,10 @@ locals {
       address = "192.168.66.3"
       port    = 30037
     }
+    "sonar.ahara.io" = {
+      address = "192.168.66.3"
+      port    = 30090
+    }
   }
   azs                            = slice(data.aws_availability_zones.available.names, 0, 2)
   az                             = local.azs[0]
