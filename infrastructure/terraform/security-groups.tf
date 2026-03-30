@@ -158,19 +158,19 @@ resource "aws_security_group" "wireguard" {
   }
 
   ingress {
-    description     = "Komodo API from platform Lambdas"
-    from_port       = 30160
-    to_port         = 30160
-    protocol        = "tcp"
-    security_groups = [aws_security_group.platform_lambda.id]
+    description = "Komodo API from private subnets (middlebox routing requires CIDR, not SG ref)"
+    from_port   = 30160
+    to_port     = 30160
+    protocol    = "tcp"
+    cidr_blocks = [local.private_subnet_cidr, local.private_subnet_cidr_b]
   }
 
   ingress {
-    description     = "TrueNAS Postgres from platform Lambdas"
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
-    security_groups = [aws_security_group.platform_lambda.id]
+    description = "TrueNAS Postgres from private subnets (middlebox routing requires CIDR, not SG ref)"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [local.private_subnet_cidr, local.private_subnet_cidr_b]
   }
 
   egress {
