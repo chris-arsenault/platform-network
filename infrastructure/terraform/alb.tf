@@ -78,15 +78,16 @@ resource "aws_lb_listener" "https" {
   depends_on = [aws_acm_certificate_validation.reverse_proxy]
 }
 
-# --- Reverse proxy listener rule (Cognito auth + forward to on-prem) ---
+# --- Reverse proxy: Cognito-authenticated routes ---
 
-resource "aws_lb_listener_rule" "reverse_proxy" {
+resource "aws_lb_listener_rule" "reverse_proxy_authenticated" {
+  count        = length(local.reverse_proxy_cognito_hosts) > 0 ? 1 : 0
   listener_arn = aws_lb_listener.https.arn
   priority     = 100
 
   condition {
     host_header {
-      values = local.reverse_proxy_hostnames
+      values = local.reverse_proxy_cognito_hosts
     }
   }
 
@@ -108,6 +109,25 @@ resource "aws_lb_listener_rule" "reverse_proxy" {
   action {
     type             = "forward"
     order            = 2
+    target_group_arn = aws_lb_target_group.reverse_proxy.arn
+  }
+}
+
+# --- Reverse proxy: passthrough routes (services handle their own auth) ---
+
+resource "aws_lb_listener_rule" "reverse_proxy_passthrough" {
+  count        = length(local.reverse_proxy_passthrough_hosts) > 0 ? 1 : 0
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 101
+
+  condition {
+    host_header {
+      values = local.reverse_proxy_passthrough_hosts
+    }
+  }
+
+  action {
+    type             = "forward"
     target_group_arn = aws_lb_target_group.reverse_proxy.arn
   }
 }

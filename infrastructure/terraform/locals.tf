@@ -29,22 +29,26 @@ locals {
     "dashboards.ahara.io" = {
       address = "192.168.66.3"
       port    = 30037
+      auth    = "cognito"
     }
     "sonar.ahara.io" = {
       address = "192.168.66.3"
       port    = 30090
+      auth    = "passthrough"
     }
   }
-  azs                            = slice(data.aws_availability_zones.available.names, 0, 2)
-  az                             = local.azs[0]
-  az_secondary                   = local.azs[1]
-  reverse_proxy_hostnames        = sort(keys(local.reverse_proxy_routes))
-  reverse_proxy_primary_hostname = local.reverse_proxy_hostnames[0]
-  reverse_proxy_sans             = [for host in local.reverse_proxy_hostnames : host if host != local.reverse_proxy_primary_hostname]
-  route53_zone_id                = data.aws_route53_zone.root.zone_id
-  hardening_dnf_config           = templatefile("${path.module}/templates/dnf_automatic.conf.tpl", {})
-  hardening_sysctl_config        = templatefile("${path.module}/templates/sysctl_hardening.conf.tpl", {})
-  hardening_aide_config          = templatefile("${path.module}/templates/aide_amazon_linux.conf.tpl", {})
+  azs                             = slice(data.aws_availability_zones.available.names, 0, 2)
+  az                              = local.azs[0]
+  az_secondary                    = local.azs[1]
+  reverse_proxy_hostnames         = sort(keys(local.reverse_proxy_routes))
+  reverse_proxy_cognito_hosts     = [for h, r in local.reverse_proxy_routes : h if r.auth == "cognito"]
+  reverse_proxy_passthrough_hosts = [for h, r in local.reverse_proxy_routes : h if r.auth == "passthrough"]
+  reverse_proxy_primary_hostname  = local.reverse_proxy_hostnames[0]
+  reverse_proxy_sans              = [for host in local.reverse_proxy_hostnames : host if host != local.reverse_proxy_primary_hostname]
+  route53_zone_id                 = data.aws_route53_zone.root.zone_id
+  hardening_dnf_config            = templatefile("${path.module}/templates/dnf_automatic.conf.tpl", {})
+  hardening_sysctl_config         = templatefile("${path.module}/templates/sysctl_hardening.conf.tpl", {})
+  hardening_aide_config           = templatefile("${path.module}/templates/aide_amazon_linux.conf.tpl", {})
   hardening_script = templatefile("${path.module}/templates/apply_system_hardening.sh.tpl", {
     DNF_AUTOMATIC_CONF     = local.hardening_dnf_config
     SYSCTL_HARDENING_CONF  = local.hardening_sysctl_config
