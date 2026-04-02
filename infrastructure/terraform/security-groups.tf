@@ -149,11 +149,11 @@ resource "aws_security_group" "wireguard" {
   dynamic "ingress" {
     for_each = local.reverse_proxy_routes
     content {
-      description     = "${ingress.key} from reverse proxy"
-      from_port       = ingress.value.port
-      to_port         = ingress.value.port
-      protocol        = "tcp"
-      security_groups = [aws_security_group.reverse_proxy.id]
+      description = "${ingress.key} from private subnets (middlebox routing requires CIDR, not SG ref)"
+      from_port   = ingress.value.port
+      to_port     = ingress.value.port
+      protocol    = "tcp"
+      cidr_blocks = [local.private_subnet_cidr, local.private_subnet_cidr_b]
     }
   }
 
