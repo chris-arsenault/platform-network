@@ -52,18 +52,6 @@ resource "aws_ssm_parameter" "vpc_id" {
   value = aws_vpc.this.id
 }
 
-resource "aws_ssm_parameter" "public_subnet_ids" {
-  name  = "/platform/network/public-subnet-ids"
-  type  = "StringList"
-  value = join(",", [aws_subnet.public.id, aws_subnet.public_b.id])
-}
-
-resource "aws_ssm_parameter" "private_subnet_ids" {
-  name  = "/platform/network/private-subnet-ids"
-  type  = "StringList"
-  value = join(",", [aws_subnet.private.id, aws_subnet.private_b.id])
-}
-
 resource "aws_ssm_parameter" "route53_zone_id" {
   name  = "/platform/network/route53-zone-id"
   type  = "String"
