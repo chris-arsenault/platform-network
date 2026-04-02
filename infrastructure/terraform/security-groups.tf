@@ -22,7 +22,9 @@ resource "aws_security_group" "nat" {
   }
 
   tags = {
-    Name = "${local.prefix}-nat-sg"
+    Name       = "${local.prefix}-nat-sg"
+    "sg:role"  = "nat"
+    "sg:scope" = "internet"
   }
 }
 
@@ -58,7 +60,9 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name = "${local.prefix}-alb-sg"
+    Name       = "${local.prefix}-alb-sg"
+    "sg:role"  = "alb"
+    "sg:scope" = "public"
   }
 }
 
@@ -86,7 +90,31 @@ resource "aws_security_group" "reverse_proxy" {
   }
 
   tags = {
-    Name = "${local.prefix}-proxy-sg"
+    Name       = "${local.prefix}-proxy-sg"
+    "sg:role"  = "reverse-proxy"
+    "sg:scope" = "base"
+  }
+}
+
+# Per-service reverse proxy SGs — grants access to a specific TrueNAS service port
+resource "aws_security_group" "reverse_proxy_service" {
+  for_each = local.reverse_proxy_routes
+
+  name        = "${local.prefix}-proxy-${replace(each.key, ".", "-")}-sg"
+  description = "Reverse proxy access to ${each.key}"
+  vpc_id      = aws_vpc.this.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name       = "${local.prefix}-proxy-${replace(each.key, ".", "-")}-sg"
+    "sg:role"  = "reverse-proxy"
+    "sg:scope" = each.key
   }
 }
 
@@ -103,8 +131,10 @@ resource "aws_security_group" "platform_lambda" {
   }
 
   tags = {
-    Name    = "${local.prefix}-platform-lambda-sg"
-    project = local.prefix
+    Name       = "${local.prefix}-platform-lambda-sg"
+    project    = local.prefix
+    "sg:role"  = "lambda"
+    "sg:scope" = "platform"
   }
 }
 
@@ -149,11 +179,11 @@ resource "aws_security_group" "wireguard" {
   dynamic "ingress" {
     for_each = local.reverse_proxy_routes
     content {
-      description     = "${ingress.key} from reverse proxy"
+      description     = "${ingress.key} via reverse proxy"
       from_port       = ingress.value.port
       to_port         = ingress.value.port
       protocol        = "tcp"
-      security_groups = [aws_security_group.reverse_proxy.id]
+      security_groups = [aws_security_group.reverse_proxy_service[ingress.key].id]
     }
   }
 
@@ -184,6 +214,8 @@ resource "aws_security_group" "wireguard" {
   }
 
   tags = {
-    Name = "${local.prefix}-sg"
+    Name       = "${local.prefix}-sg"
+    "sg:role"  = "wireguard"
+    "sg:scope" = "truenas"
   }
 }

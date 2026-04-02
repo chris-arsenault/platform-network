@@ -19,7 +19,10 @@ module "reverse_proxy" {
   name                 = "${local.prefix}-reverse-proxy"
   iam_instance_profile = aws_iam_instance_profile.reverse_proxy.name
   subnet_id            = aws_subnet.private.id
-  security_group_ids   = [aws_security_group.reverse_proxy.id]
+  security_group_ids = concat(
+    [aws_security_group.reverse_proxy.id],
+    [for sg in aws_security_group.reverse_proxy_service : sg.id]
+  )
 
   user_data = templatefile("${path.module}/templates/common_user_data.sh.tpl", {
     EXTRA_SNIPPET = templatefile("${path.module}/templates/reverse_proxy_user_data.sh.tpl", {
