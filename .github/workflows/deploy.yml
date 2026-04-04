@@ -59,6 +59,13 @@ jobs:
         id: fmt
         run: terraform fmt -check -recursive
 
+      - uses: chris-arsenault/platform/.github/actions/sonar-scan@main
+        continue-on-error: true
+        with:
+          project-key: platform-network
+          sources: infrastructure/terraform
+          exclusions: "**/.terraform/**"
+
       - name: Terraform Init
         env:
           TF_CLI_ARGS: -no-color
