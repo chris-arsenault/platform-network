@@ -1,0 +1,4 @@
+project: platform-network
+prefix: vpn
+stack:
+  - terraform

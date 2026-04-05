@@ -45,6 +45,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: chris-arsenault/platform/.github/actions/governance-check@main
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
         with:
