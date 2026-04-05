@@ -32,6 +32,10 @@ server {
   listen 80;
   server_name ${host};
 
+%{ if try(route.max_body_size, "") != "" ~}
+  client_max_body_size ${route.max_body_size};
+%{ endif ~}
+
   location / {
     proxy_pass http://${route.address}:${route.port};
     proxy_http_version 1.1;

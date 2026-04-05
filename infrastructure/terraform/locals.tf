@@ -32,9 +32,10 @@ locals {
       auth    = "cognito"
     }
     "sonar.ahara.io" = {
-      address = "192.168.66.3"
-      port    = 30090
-      auth    = "passthrough"
+      address       = "192.168.66.3"
+      port          = 30090
+      auth          = "passthrough"
+      max_body_size = "5m"
     }
   }
   azs                             = slice(data.aws_availability_zones.available.names, 0, 2)
