@@ -7,7 +7,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   ci:
     uses: chris-arsenault/platform/.github/workflows/ci.yml@main
     secrets: inherit
+
