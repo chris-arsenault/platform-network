@@ -2,104 +2,12 @@ name: CI/CD
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - '**.tf'
-      - '**.tfvars'
-      - 'infrastructure/**'
-      - 'modules/**'
+    branches: [main]
   pull_request:
-    branches:
-      - main
-    paths:
-      - '**.tf'
-      - '**.tfvars'
-      - 'infrastructure/**'
-      - 'modules/**'
+    branches: [main]
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.ref == 'refs/heads/main' && 'platform-network-deploy' || format('platform-network-{0}', github.ref) }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-
-permissions:
-  id-token: write
-  contents: read
-
-env:
-  AWS_REGION: 'us-east-1'
-
 jobs:
-  terraform:
-    name: Terraform
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: infrastructure/terraform
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - uses: chris-arsenault/platform/.github/actions/governance-check@main
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
-        with:
-          terraform_version: 1.12.2
-
-      - name: Configure AWS credentials via OIDC
-        uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: ${{ secrets.OIDC_ROLE }}
-          role-session-name: GitHubActions-${{ github.run_id }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Lint terraform
-        id: fmt
-        run: terraform fmt -check -recursive
-
-      - uses: chris-arsenault/platform/.github/actions/sonar-scan@main
-        continue-on-error: true
-        with:
-          project-key: platform-network
-          sources: infrastructure/terraform
-          exclusions: "**/.terraform/**"
-
-      - name: Terraform Init
-        env:
-          TF_CLI_ARGS: -no-color
-        run: |
-          terraform init \
-            -backend-config bucket=${{ secrets.STATE_BUCKET }} \
-            -backend-config region=${{ env.AWS_REGION }}
-
-      - name: Terraform Plan
-        env:
-          TF_CLI_ARGS: -no-color
-        run: |
-          terraform plan -input=false -out=tfplan
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        env:
-          TF_CLI_ARGS: -no-color
-        run: |
-          terraform apply -input=false -auto-approve tfplan
-
-  report:
-    if: always()
-    needs: [terraform]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: ${{ secrets.OIDC_ROLE }}
-          role-session-name: GitHubActions-${{ github.run_id }}
-          aws-region: us-east-1
-      - uses: chris-arsenault/platform/.github/actions/report-build@main
+  ci:
+    uses: chris-arsenault/platform/.github/workflows/ci.yml@main
+    secrets: inherit
