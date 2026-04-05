@@ -57,7 +57,7 @@ jobs:
           role-session-name: GitHubActions-${{ github.run_id }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terraform Format Check
+      - name: Lint terraform
         id: fmt
         run: terraform fmt -check -recursive
 
