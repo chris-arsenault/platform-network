@@ -4,7 +4,8 @@ resource "aws_vpc" "this" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${local.prefix}-vpc"
+    Name       = "${local.prefix}-vpc"
+    "vpc:role" = "platform"
   }
 }
 

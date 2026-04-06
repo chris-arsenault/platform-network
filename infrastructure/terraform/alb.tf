@@ -10,7 +10,8 @@ resource "aws_lb" "reverse_proxy" {
   enable_deletion_protection = false
 
   tags = {
-    Name = "${local.prefix}-alb"
+    Name      = "${local.prefix}-alb"
+    "lb:role" = "platform"
   }
 }
 
