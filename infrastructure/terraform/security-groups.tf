@@ -138,6 +138,25 @@ resource "aws_security_group" "platform_lambda" {
   }
 }
 
+resource "aws_security_group" "vpn_client" {
+  name        = "${local.prefix}-vpn-client-sg"
+  description = "Opt-in SG for Lambdas that need VPN/TrueNAS access"
+  vpc_id      = aws_vpc.this.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name       = "${local.prefix}-vpn-client-sg"
+    "sg:role"  = "vpn-client"
+    "sg:scope" = "platform"
+  }
+}
+
 resource "aws_security_group" "wireguard" {
   name        = "${local.prefix}-sg"
   description = "WireGuard access controls"
@@ -185,6 +204,14 @@ resource "aws_security_group" "wireguard" {
       protocol        = "tcp"
       security_groups = [aws_security_group.reverse_proxy_service[ingress.key].id]
     }
+  }
+
+  ingress {
+    description     = "All TCP from VPN client Lambdas"
+    from_port       = 0
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [aws_security_group.vpn_client.id]
   }
 
   ingress {
