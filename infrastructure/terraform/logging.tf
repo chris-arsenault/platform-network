@@ -16,7 +16,7 @@ resource "aws_cloudwatch_log_group" "nat" {
 }
 
 locals {
-  cloudwatch_region = data.aws_region.current.id
+  cloudwatch_region = data.aws_region.current.region
 
   reverse_proxy_logs_query = <<-EOT
 SOURCE '/aws/vpn/${local.prefix}/reverse-proxy'
